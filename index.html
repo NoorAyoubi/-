@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جسر القدس القانوني - بوابة الخدمات | גשר אל-קודס - פורטל שירותים</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <style>
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .portal-container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .portal-header h1 {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .portal-header p {
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+        .portal-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .portal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        .portal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            transition: background 0.3s;
+        }
+        .portal-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 12px 30px rgba(251, 191, 36, 0.15);
+        }
+        .portal-card:hover::before {
+            background: var(--accent-gold);
+        }
+        .portal-icon {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+        }
+        .portal-card h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .portal-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            text-align: center;
+        }
+        .portal-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--accent-gold);
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-top: 12px;
+            transition: all 0.2s;
+        }
+        .portal-card:hover .portal-btn {
+            background: var(--accent-gold);
+            color: var(--bg-dark) !important;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+        }
+        .portal-footer {
+            margin-top: 40px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--card-border);
+            padding-top: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="portal-container">
+        <div class="portal-header">
+            <h1>⚖️ جسر القدس القانوني</h1>
+            <p>بوابة الخدمات القانونية الرقمية | פורטל שירותים משפטיים דיגיטליים</p>
+        </div>
+        
+        <div class="portal-cards">
+            <!-- Client Card -->
+            <a href="client_intake.html" class="portal-card">
+                <div class="portal-icon">👤</div>
+                <h2>بوابة الموكل / פורטל לקוחות</h2>
+                <p>استبيان وتقييم ذكي فوري لقضايا إصابات العمل وحوادث الطرق مجاناً وبسرية تامة.<br>הערכה חכמה ודיסקרטית לסיכויי קבלת פיצויים בגין תאונות עבודה או דרכים.</p>
+                <div class="portal-btn">دخول البوابة | כניסה לפורטל</div>
+            </a>
+            
+            <!-- Lawyer Card -->
+            <a href="lawyer_dashboard.html" class="portal-card">
+                <div class="portal-icon">💼</div>
+                <h2>لوحة تحكم المحامي / לוח בקרה לעורך דין</h2>
+                <p>إدارة طلبات الموكلين الجدد، الأرشيف، ودراسة تفاصيل الحوادث بمساعدة الذكاء الاصطناعي.<br>ניהול פניות לקוחות חדשות, גישה לארכיון וניתוח תיקים מבוסס בינה מלאכותית (AI).</p>
+                <div class="portal-btn">لوحة التحكم | כنيסה למערכת</div>
+            </a>
+        </div>
+        
+        <div class="portal-footer">
+            © 2026 مكتب جسر القدس للمحاماة والاستشارات القانونية. جميع الحقوق محفوظة.
+        </div>
+    </div>
+
+</body>
+</html>

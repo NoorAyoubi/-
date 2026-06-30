@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>جسر القدس القانوني - استشارة أولية عن بعد</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/chat.css">
+    <link rel="stylesheet" href="src/styles/notification.css">
+</head>
+<body>
+
+    <!-- Landing Page (Public Website) -->
+    <div id="landingPage" class="landing-page">
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="logo" id="logoLink" style="cursor: pointer; font-weight: 700;">⚖️ جسر القدس القانوني</div>
+            <div class="nav-links" style="display: flex; align-items: center; gap: 16px;">
+                <a href="#" id="linkServices">الخدمات</a>
+                <a href="#" id="linkPrivacy">الخصوصية</a>
+                <div class="lang-switcher-capsule" id="langSelectorLanding">
+                    <button class="lang-btn" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="he">עב</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <h1 class="hero-title" id="heroTitle" style="font-size: 3rem;">هل لديك تعويض بعد إصابة؟</h1>
+            <p class="hero-subtitle" id="heroSubtitle" style="font-size: 1.8rem; color: var(--accent-gold); font-weight: 700;">اكتشف خلال دقيقة مجاناً</p>
+            
+            <div class="trust-badges" style="display: flex; flex-direction: row; justify-content: center; gap: 16px; margin-top: 15px; flex-wrap: wrap;">
+                <span class="trust-badge" id="badge1" style="font-size: 1.1rem; padding: 10px 24px;">✅ بدون تكلفة</span>
+                <span class="trust-badge" id="badge2" style="font-size: 1.1rem; padding: 10px 24px;">✅ بدون التزام</span>
+                <span class="trust-badge" id="badge3" style="font-size: 1.1rem; padding: 10px 24px;">✅ خلال دقيقتين فقط</span>
+            </div>
+
+            <button class="btn-hero-cta" id="startBtn" style="font-size: 1.4rem; padding: 18px 48px; border-radius: 30px;">👉 ابدأ الآن</button>
+        </header>
+
+        <!-- Explain it Simply Section (اشرحها لي ببساطة) -->
+        <section class="simple-explain-section">
+            <div class="roadmap-title" id="explainTitle" style="margin-bottom: 10px;">🛡️ اشرحها لي ببساطة (كل ما تحتاج لمعرفته)</div>
+            <p id="explainSub" style="text-align: center; color: var(--text-secondary); margin-bottom: 24px;">نجيب على مخاوفك الأساسية بوضوح تام ودون تعقيدات قانونية</p>
+            <div class="simple-explain-container">
+                <div class="simple-explain-card">
+                    <h4 id="costTitle">💰 تكلفة الخدمة</h4>
+                    <p id="costText">🆓 الاستشارة الأولية مجانية 100%<br>📍 تتم عن بُعد بسهولة تامة</p>
+                </div>
+                <div class="simple-explain-card">
+                    <h4 id="humanTitle">🤝 المعاملة الإنسانية</h4>
+                    <p id="humanText"><strong>ودودون ونهتم بصحتك أولاً</strong>. نحن نسمعك ونحترم مشاعرك. لا يوجد أي ضغط عليك، ولك كامل الحرية في التراجع في أي لحظة.</p>
+                </div>
+                <div class="simple-explain-card">
+                    <h4 id="paperTitle">📁 البيروقراطية والأوراق</h4>
+                    <p id="paperText"><strong>نحن نتابع كل شيء</strong>. نتولى عنك سحب التقارير الطبية والمراسلات مع شركات التأمين ومؤسسات التأمين الوطني لتخفيف الجهد عليك.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Timeline Roadmap -->
+        <section class="roadmap-section">
+            <div class="roadmap-title" id="roadmapSectionTitle">🗺️ خريطة الطريق لتعويضك</div>
+            <div class="roadmap-timeline">
+                <div class="roadmap-step active">
+                    <div class="step-number">1</div>
+                    <div class="step-label" id="step1Label">تقييم ذكي</div>
+                    <div class="step-desc" id="step1Desc">استبيان بسيط يستغرق دقيقتين لتحديد قوة قضيتك مجاناً.</div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="step-number">2</div>
+                    <div class="step-label" id="step2Label">دراسة ملفك</div>
+                    <div class="step-desc" id="step2Desc">يقوم مستشارنا الطبي والقانوني بمراجعة التقارير خلال أسبوع.</div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="step-number">3</div>
+                    <div class="step-label" id="step3Label">تقديم المطالبة</div>
+                    <div class="step-desc" id="step3Desc">مراسلة الجهات المقصرة ومؤسسات التأمين لبدء التفاوض.</div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="step-number">4</div>
+                    <div class="step-label" id="step4Label">استلام التعويض</div>
+                    <div class="step-desc" id="step4Desc">معظم القضايا تنتهي بتسوية مرضية خلال 6 إلى 12 شهر.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust FAQs & Reviews -->
+        <section class="faq-section">
+            <div class="roadmap-title" id="faqTitle">💬 الأسئلة الشائعة وتجارب الموكلين</div>
+            <div class="faq-grid">
+                <div class="faq-card">
+                    <div class="faq-question" id="faq1Q">❓ ماذا يحدث لو خسرنا المطالبة بالتعويض؟</div>
+                    <div class="faq-answer" id="faq1A">لا تدفع أي شيء. نحن نتحمل كامل أتعاب المتابعة والبحث، وإذا لم ننجح في تحصيل التعويض، فلن تدفع أي أتعاب للمكتب نهائياً.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-question" id="faq2Q">❓ هل التقييم الذكي يلزمني بأي شيء؟</div>
+                    <div class="faq-answer" id="faq2A">أبداً. التقييم سري تماماً ويتم على متصفحك. لن تتم مشاركة أي معلومة إلا إذا اخترت بنفسك في نهاية المطاف إرسالها ومتابعة العمل معنا.</div>
+                </div>
+            </div>
+
+            <!-- Lawyer Bio / Human Safety card -->
+            <div class="lawyer-bio-card">
+                <div class="lawyer-avatar">👨‍⚖️</div>
+                <div class="lawyer-info">
+                    <h4 id="bioTitle">مكتب جسر القدس القانوني</h4>
+                    <div class="title" id="bioSubtitle">مستشارك الإنساني والقانوني المعتمد</div>
+                    <p class="lawyer-quote" id="bioQuote">"حقك المالي ليس طمعاً، بل هو تعويض عادل لمساعدتك على استعادة حياتك وصحتك. شركات التأمين تعتمد دائماً على تأجيلك للمطالبة حتى يسقط حقك بالتقادم. نحن هنا لنسمعك ونسانك خطوة بخطوة."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Landing Page Footer -->
+        <footer class="landing-footer">
+            <div class="footer-links">
+                <a href="#" id="footerLogo">⚖️ جسر القدس القانوني</a>
+                <a href="#" id="footerServices">الخدمات</a>
+                <a href="#" id="footerPrivacy">الخصوصية</a>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.85rem;" id="footerCopyright">© 2026 مكتب جسر القدس للمحاماة والاستشارات القانونية. جميع الحقوق محفوظة.</p>
+        </footer>
+    </div>
+
+    <!-- Chat App Container (Hidden by default) -->
+    <div id="chatApp" class="chat-app" style="display: none;">
+        <div class="app-container">
+            <!-- Header -->
+            <header class="app-header">
+                <button class="btn-back" id="backToHomeBtn">⬅️ رجوع</button>
+                <div class="brand-title" id="chatBrandTitle">
+                    ⚖️ جسر القدس
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="badge" id="chatBadge">استشارة أولية مجانية</span>
+                </div>
+            </header>
+
+            <!-- Progress Bar Tracker -->
+            <div style="padding: 0 24px;">
+                <div class="progress-container">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <main class="chat-area" id="chatArea">
+                <!-- Messages will be dynamically added here by client_intake.js -->
+            </main>
+
+            <!-- Footer / Input Actions Area -->
+            <footer class="app-footer" id="appFooter">
+                <!-- Dynamic choice buttons and inputs will appear here -->
+            </footer>
+        </div>
+    </div>
+
+    <!-- Services Modal -->
+    <div class="modal-overlay" id="servicesModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeServicesBtn">&times;</button>
+            <h2 style="color: var(--accent-gold); margin-bottom: 20px; font-size: 1.5rem;" id="servicesModalTitle">⚖️ خدمات مكتب القدس للمحاماة</h2>
+            <div style="line-height: 1.6; font-size: 0.95rem; display: flex; flex-direction: column; gap: 12px; color: var(--text-primary);" id="servicesModalContent">
+                <p>📍 **مكتب رسمي معتمد في مدينة القدس** يقدم خدمات الدفاع والمطالبة القانونية لشرائح المجتمع المقدسي:</p>
+                <p>🔹 **حوادث السير والطرق:** تحصيل أقصى تعويضات مالية ممكنة للمصابين طبقاً لقانون التعويضات.</p>
+                <p>🔹 **إصابات العمل بالمصانع والورش:** مراجعة القضايا أمام مؤسسة التأمين الوطني (بيطוח לאומי) وتثبيت نسب العجز الطبي.</p>
+                <p>🔹 **الاستشارات الطبية-القانونية:** مراجعة التقارير الطبية للموكلين عبر أطباء المكتب المعتمدين لتجهيز ملف دعوى متكامل وقوي.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closePrivacyBtn">&times;</button>
+            <h2 style="color: var(--accent-gold); margin-bottom: 20px; font-size: 1.5rem;" id="privacyModalTitle">🔒 التزام السرية وحماية الخصوصية</h2>
+            <div style="line-height: 1.6; font-size: 0.95rem; display: flex; flex-direction: column; gap: 12px; color: var(--text-primary);" id="privacyModalContent">
+                <p>نحن في مكتب القدس نلتزم بأعلى درجات السرية المهنية لحماية حقوق موكلينا المصابين:</p>
+                <p>🔐 **حفظ البيانات محلياً:** إجاباتك وتعليقاتك أثناء المحادثة تُخزن مؤقتاً وبشكل آمن على متصفحك وجهازك فقط.</p>
+                <p>🛡️ **التحكم المطلق لك:** لن يتم إرسال أي معلومة أو ملف للمكتب بدون ضغطك الصريح على زر الموافقة في نهاية الدردشة.</p>
+                <p>❌ **حق تدمير البيانات:** إذا اخترت عدم إرسال الطلب وإغلاق الشات، يتم مسح وتدمير كافة بيانات الجلسة فوراً دون الإبقاء على أي أثر لها.</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="src/js/client_app.js?v=1.0.0"></script>
+</body>
+</html>

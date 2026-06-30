@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>لوحة التحكم - مكتب المحاماة بالقدس</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/notification.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-title">⚖️ جسر القدس</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="btnLeads">📋 طلبات الموكلين الجدد</a>
+                <a href="#" class="nav-item" id="btnArchive">👥 الأرشيف والعملاء</a>
+                <a href="#" class="nav-item" id="btnSettings">⚙️ إعدادات النظام</a>
+            </nav>
+            <div style="padding: 24px; margin-top: auto; display: flex; justify-content: center;">
+                <div class="lang-switcher-capsule" id="langSelectorDashboard">
+                    <button class="lang-btn" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="he">עב</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- 1. Leads Section -->
+            <div id="leadsSection">
+                <h1 class="dashboard-title">إدارة طلبات إصابات العمل الواردة</h1>
+                <div class="table-container">
+                    <table class="leads-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>نوع الحادث</th>
+                                <th>تمت المعالجة</th>
+                                <th>ملخص الحادث</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadsTableBody">
+                            <!-- Rows will be dynamically loaded by lawyer_dashboard.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. Archive Section -->
+            <div id="archiveSection" style="display: none;">
+                <h1 class="dashboard-title">أرشيف العملاء المعالجة قضاياهم</h1>
+                <div class="table-container">
+                    <table class="leads-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>نوع الحادث</th>
+                                <th>حالة الأرشفة</th>
+                                <th>ملخص الحادث</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archiveTableBody">
+                            <!-- Rows will be dynamically loaded by lawyer_dashboard.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. Settings Section -->
+            <div id="settingsSection" style="display: none;">
+                <h1 class="dashboard-title">إعدادات نظام جسر القدس القانوني</h1>
+                <div class="feature-card" style="text-align: right; max-width: 600px; display: flex; flex-direction: column; gap: 20px; padding: 30px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;">
+                    <h3>🛠️ إعدادات عامة وتطهير البيانات</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">يمكنك تهيئة أو تفريغ قاعدة بيانات الاستشارات بالكامل للبدء من جديد وتجربة النظام بصفر مدخلات:</p>
+                    <button class="btn-primary" onclick="resetDatabase()" style="background-color: #ef4444; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s;">⚠️ تفريغ كافة الطلبات والبدء من جديد</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Case Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeModalBtn">&times;</button>
+            <div class="modal-header-title">📋 تفاصيل طلب الموكل</div>
+            <div id="modalDetailsBody">
+                <!-- Case summary details will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="src/js/lawyer_app.js?v=1.0.0"></script>
+</body>
+</html>
