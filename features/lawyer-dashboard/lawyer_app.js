@@ -511,12 +511,17 @@ window.resetDatabase = function() {
     if (!t) return;
     
     if (confirm(t.resetConfirm)) {
-        localStorage.setItem('jlm_legal_submissions', JSON.stringify([]));
+        let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
+        
+        // Filter out only processed (archived) leads, keep pending leads!
+        submissions = submissions.filter(item => !item.processed);
+        
+        localStorage.setItem('jlm_legal_submissions', JSON.stringify(submissions));
         localStorage.setItem('jlm_db_initialized', 'true');
         loadSubmissions();
         
         // Trigger database reset celebration confetti
-        const msg = currentLang === 'en' ? "🧹 Database wiped successfully." : (currentLang === 'he' ? "🧹 בסיס הנתונים אופס בהצלחה." : "🧹 تم تفريغ قاعدة البيانات بنجاح.");
+        const msg = currentLang === 'en' ? "🧹 Archive cleared successfully." : (currentLang === 'he' ? "🧹 הארכיון רוקן בהצלחה." : "🧹 تم تفريغ الأرشيف بنجاح.");
         startCelebration(msg);
     }
 };
