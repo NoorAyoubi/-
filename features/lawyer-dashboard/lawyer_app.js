@@ -219,9 +219,11 @@ function formatGmailDate(lead, lang) {
     const timeStr = `${hours}:${minutes} ${ampm}`;
     
     if (diffDays === 0) {
-        return timeStr;
+        const todayLabel = lang === 'he' ? 'היום' : (lang === 'en' ? 'Today' : 'اليوم');
+        return `${todayLabel}، ${timeStr}`;
     } else if (diffDays === 1) {
-        return lang === 'he' ? 'אתמול' : (lang === 'en' ? 'Yesterday' : 'أمس');
+        const yesterdayLabel = lang === 'he' ? 'אתמול' : (lang === 'en' ? 'Yesterday' : 'أمس');
+        return `${yesterdayLabel}، ${timeStr}`;
     } else if (diffDays > 1 && diffDays < 7 && targetDate.getDay() <= today.getDay()) {
         const dayNames = {
             ar: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
@@ -229,7 +231,7 @@ function formatGmailDate(lead, lang) {
             en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         };
         const list = dayNames[lang] || dayNames.ar;
-        return list[date.getDay()];
+        return `${list[date.getDay()]}، ${timeStr}`;
     } else {
         const monthNames = {
             ar: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
@@ -237,7 +239,7 @@ function formatGmailDate(lead, lang) {
             en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         };
         const mList = monthNames[lang] || monthNames.ar;
-        return `${date.getDate()} ${mList[date.getMonth()]}`;
+        return `${date.getDate()} ${mList[date.getMonth()]}، ${timeStr}`;
     }
 }
 
