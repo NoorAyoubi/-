@@ -19,7 +19,7 @@
             beforeTitle: "قبل أن تبدأ:",
             beforeDesc: "سيقوم المساعد الذكي بطرح مجموعة من الأسئلة البسيطة لفهم حالتك بشكل أولي. تستغرق العملية عادة أقل من دقيقتين.",
             privacy: "🔒 معلوماتك تُعامل بسرية تامة.",
-            guideText: "💡 لبدء الاستشارة، يرجى إغلاق هذه النافذة (×) والضغط على زر \"ابدأ الآن\" بالخلفية."
+            guideText: "💡 لبدء الاستشارة ، يرجى الضغط على زر \"ابدأ الآن\" بالخلفية ."
         },
         he: {
             title: "ברוכים הבאים לגשר אל-קודס המשפטי",
@@ -32,7 +32,7 @@
             beforeTitle: "לפני שמתחילים:",
             beforeDesc: "העוזר החכם ישאל אותך מספר שאלות פשוטות כדי להבין את המקרה שלך באופן ראשוני. התהליך לוקח בדרך כלל פחות משתי דקות.",
             privacy: "🔒 המידע שלך מטופל בסודיות מוחלטת.",
-            guideText: "💡 כדי להתחיל את הייעוץ, אנא סגור חלון זה (×) ולחץ על כפתור \"התחל עכשיו\" ברקע."
+            guideText: "💡 כדי להתחיל את הייעוץ, אנא לחץ על כפתור \"התחל עכשיו\" ברקע."
         },
         en: {
             title: "Welcome to Jerusalem Legal Bridge",
@@ -45,7 +45,7 @@
             beforeTitle: "Before you start:",
             beforeDesc: "The smart assistant will ask simple questions to understand your case initially. The process usually takes less than 2 minutes.",
             privacy: "🔒 Your information is treated with strict confidentiality.",
-            guideText: "💡 To start the consultation, please close this window (×) and click the \"Start Now\" button in the background."
+            guideText: "💡 To start the consultation, please click the \"Start Now\" button in the background."
         }
     };
 
