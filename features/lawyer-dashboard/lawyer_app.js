@@ -485,13 +485,6 @@ function renderModalContent(id) {
                     ${translatedDetails}
                 </p>
             </div>
-            <hr style="border: 0; border-top: 1px solid var(--card-border);">
-            <div style="background-color: rgba(197, 168, 128, 0.05); border: 1px dashed var(--accent-gold); border-radius: 8px; padding: 12px;">
-                <strong style="color: var(--accent-gold);">${t.mAiSummary}</strong>
-                <p style="margin-top: 6px; font-size: 0.9rem; color: var(--text-secondary);">
-                    ${tSub.mAiText(displayCat, displayLoc, displayNeg, translatedLocationBefore, translatedDetails)}
-                </p>
-            </div>
         </div>
     `;
 }
