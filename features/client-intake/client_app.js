@@ -884,24 +884,33 @@ window.onload = () => {
     if (startBtn) {
         startBtn.onclick = () => {
             if (isIntakeStarted) return;
-            isIntakeStarted = true;
             
-            landingPage.style.display = 'none';
-            chatApp.style.display = 'flex';
-            
-            // Reset state variables
-            state = {
-                category: '',
-                workLocation: '',
-                isNegligence: '',
-                accidentDetails: '',
-                locationBefore: '',
-                clientName: '',
-                clientPhone: ''
+            const launchChat = () => {
+                isIntakeStarted = true;
+                landingPage.style.display = 'none';
+                chatApp.style.display = 'flex';
+                
+                // Reset state variables
+                state = {
+                    category: '',
+                    workLocation: '',
+                    isNegligence: '',
+                    accidentDetails: '',
+                    locationBefore: '',
+                    clientName: '',
+                    clientPhone: ''
+                };
+                chatArea.innerHTML = '';
+                lastBotMsgBubble = null;
+                startIntake();
             };
-            chatArea.innerHTML = '';
-            lastBotMsgBubble = null;
-            startIntake();
+            
+            // Safe call with fallback: if WelcomeModal is loaded, show it, else start directly
+            if (window.showWelcomeModal) {
+                window.showWelcomeModal(currentLang, launchChat);
+            } else {
+                launchChat();
+            }
         };
     }
     
