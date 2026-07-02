@@ -224,7 +224,6 @@
         modal.className = "welcome-modal";
         
         modal.innerHTML = `
-            <button class="welcome-close-btn" id="welcomeCloseBtn">&times;</button>
             <h2 class="welcome-title">${t.title}</h2>
             <div class="welcome-spec">${t.spec}</div>
             
@@ -271,14 +270,6 @@
         };
         
         // Event Listeners
-        document.getElementById("welcomeCloseBtn").onclick = closeWelcome;
         document.getElementById("welcomeStartBtn").onclick = closeWelcome;
-        
-        // Close on clicking backdrop overlay
-        overlay.onclick = function(e) {
-            if (e.target === overlay) {
-                closeWelcome();
-            }
-        };
     };
 })();
