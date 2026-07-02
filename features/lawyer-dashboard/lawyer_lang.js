@@ -22,6 +22,7 @@ const translations = {
         colProcessed: "تمت المعالجة",
         colSummary: "ملخص الحادث",
         colAction: "الإجراء",
+        colDate: "التاريخ",
         btnDetails: "فتح التفاصيل",
         colArchiveStatus: "حالة الأرشفة",
         
@@ -62,6 +63,7 @@ const translations = {
         colProcessed: "טופל",
         colSummary: "תקציר התאונה",
         colAction: "פעולה",
+        colDate: "תאריך",
         btnDetails: "פרטים מלאים",
         colArchiveStatus: "סטטוס ארכוב",
         
@@ -102,6 +104,7 @@ const translations = {
         colProcessed: "Processed",
         colSummary: "Accident Summary",
         colAction: "Action",
+        colDate: "Date",
         btnDetails: "Open Details",
         colArchiveStatus: "Archive Status",
         

@@ -158,6 +158,7 @@ function updateTableHeaders(t) {
             <th>${t.colCategory}</th>
             <th style="text-align: center;">${t.colProcessed}</th>
             <th>${t.colSummary}</th>
+            <th>${t.colDate}</th>
             <th>${t.colAction}</th>
         `;
     }
@@ -171,6 +172,7 @@ function updateTableHeaders(t) {
             <th>${t.colCategory}</th>
             <th style="text-align: center;">${t.colArchiveStatus}</th>
             <th>${t.colSummary}</th>
+            <th>${t.colDate}</th>
             <th>${t.colAction}</th>
         `;
     }
@@ -178,6 +180,66 @@ function updateTableHeaders(t) {
 
 let knownSubmissionIds = new Set();
 let isFirstLoad = true;
+
+// Parse date string formatted as DD/MM/YYYY
+function parseDateSent(dateStr) {
+    if (!dateStr) return new Date();
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+    }
+    const iso = Date.parse(dateStr);
+    if (!isNaN(iso)) return new Date(iso);
+    return new Date();
+}
+
+// Gmail-style Date and Time formatter
+function formatGmailDate(lead, lang) {
+    let date = null;
+    if (lead.id && lead.id > 1000000000000) {
+        date = new Date(lead.id);
+    } else {
+        date = parseDateSent(lead.dateSent);
+    }
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    
+    const diffMs = today - targetDate;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    // Time formatting
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    const timeStr = `${hours}:${minutes} ${ampm}`;
+    
+    if (diffDays === 0) {
+        return timeStr;
+    } else if (diffDays === 1) {
+        return lang === 'he' ? 'אתמול' : (lang === 'en' ? 'Yesterday' : 'أمس');
+    } else if (diffDays > 1 && diffDays < 7 && targetDate.getDay() <= today.getDay()) {
+        const dayNames = {
+            ar: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+            he: ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'שבת'],
+            en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        };
+        const list = dayNames[lang] || dayNames.ar;
+        return list[date.getDay()];
+    } else {
+        const monthNames = {
+            ar: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+            he: ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'],
+            en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        };
+        const mList = monthNames[lang] || monthNames.ar;
+        return `${date.getDate()} ${mList[date.getMonth()]}`;
+    }
+}
 
 // Load submissions from LocalStorage
 function loadSubmissions() {
@@ -260,7 +322,7 @@ function renderTable(submissions) {
     
     // 1. Render pending table
     if (pendingLeads.length === 0) {
-        leadsTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 24px;">${t.emptyLeads}</td></tr>`;
+        leadsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${t.emptyLeads}</td></tr>`;
     } else {
         pendingLeads.forEach(lead => {
             const tr = document.createElement('tr');
@@ -271,6 +333,10 @@ function renderTable(submissions) {
             const displayCat = translateCategory(lead.category, leadLang);
             const displayLoc = translateLocation(lead.workLocation, leadLang);
             
+            const formattedDate = formatGmailDate(lead, currentLang);
+            const dateObj = lead.id && lead.id > 1000000000000 ? new Date(lead.id) : parseDateSent(lead.dateSent);
+            const fullDateTooltip = dateObj.toLocaleString();
+            
             tr.innerHTML = `
                 <td><strong>${lead.clientName}</strong></td>
                 <td><a href="tel:${lead.clientPhone}" style="color: var(--accent-gold); text-decoration: none;">${lead.clientPhone}</a></td>
@@ -279,6 +345,7 @@ function renderTable(submissions) {
                     <input type="checkbox" onchange="toggleProcessed(${lead.id}, this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);">
                 </td>
                 <td style="color: var(--text-secondary); font-size: 0.85rem;" title="${shortSummary}">${croppedSummary}</td>
+                <td style="color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap;" title="${fullDateTooltip}">${formattedDate}</td>
                 <td><button class="btn-table-action" onclick="showLeadDetails(${lead.id})">${t.btnDetails}</button></td>
             `;
             leadsTableBody.appendChild(tr);
@@ -287,7 +354,7 @@ function renderTable(submissions) {
     
     // 2. Render archive table
     if (processedLeads.length === 0) {
-        archiveTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 24px;">${t.emptyArchive}</td></tr>`;
+        archiveTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${t.emptyArchive}</td></tr>`;
     } else {
         processedLeads.forEach(lead => {
             const tr = document.createElement('tr');
@@ -300,6 +367,10 @@ function renderTable(submissions) {
             
             tr.style.opacity = '0.65';
             
+            const formattedDate = formatGmailDate(lead, currentLang);
+            const dateObj = lead.id && lead.id > 1000000000000 ? new Date(lead.id) : parseDateSent(lead.dateSent);
+            const fullDateTooltip = dateObj.toLocaleString();
+            
             tr.innerHTML = `
                 <td><strong>${lead.clientName}</strong></td>
                 <td><a href="tel:${lead.clientPhone}" style="color: var(--text-secondary); text-decoration: none;">${lead.clientPhone}</a></td>
@@ -308,6 +379,7 @@ function renderTable(submissions) {
                     <input type="checkbox" checked onchange="toggleProcessed(${lead.id}, this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);">
                 </td>
                 <td style="color: var(--text-secondary); font-size: 0.85rem; text-decoration: line-through;" title="${shortSummary}">${croppedSummary}</td>
+                <td style="color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap;" title="${fullDateTooltip}">${formattedDate}</td>
                 <td><button class="btn-table-action" onclick="showLeadDetails(${lead.id})" style="text-decoration: none !important;">${t.btnDetails}</button></td>
             `;
             archiveTableBody.appendChild(tr);
