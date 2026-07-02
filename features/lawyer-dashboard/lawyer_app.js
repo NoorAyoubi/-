@@ -181,12 +181,28 @@ let isFirstLoad = true;
 
 // Load submissions from LocalStorage
 function loadSubmissions() {
-    let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
+    let rawSubmissions = localStorage.getItem('jlm_legal_submissions');
+    const isInitialized = localStorage.getItem('jlm_db_initialized');
+    let submissions = [];
     
-    // Pre-populate if empty
-    if (submissions.length === 0) {
-        localStorage.setItem('jlm_legal_submissions', JSON.stringify(mockSubmissions));
-        submissions = mockSubmissions;
+    if (rawSubmissions === null) {
+        if (!isInitialized) {
+            // First time ever: pre-populate with mock data
+            localStorage.setItem('jlm_legal_submissions', JSON.stringify(mockSubmissions));
+            localStorage.setItem('jlm_db_initialized', 'true');
+            submissions = mockSubmissions;
+        } else {
+            // Wiped/Empty state: set to empty array
+            localStorage.setItem('jlm_legal_submissions', JSON.stringify([]));
+            submissions = [];
+        }
+    } else {
+        submissions = JSON.parse(rawSubmissions);
+        if (submissions.length === 0 && !isInitialized) {
+            localStorage.setItem('jlm_legal_submissions', JSON.stringify(mockSubmissions));
+            localStorage.setItem('jlm_db_initialized', 'true');
+            submissions = mockSubmissions;
+        }
     }
     
     // Notify on new submissions
@@ -495,7 +511,8 @@ window.resetDatabase = function() {
     if (!t) return;
     
     if (confirm(t.resetConfirm)) {
-        localStorage.removeItem('jlm_legal_submissions');
+        localStorage.setItem('jlm_legal_submissions', JSON.stringify([]));
+        localStorage.setItem('jlm_db_initialized', 'true');
         loadSubmissions();
         
         // Trigger database reset celebration confetti
