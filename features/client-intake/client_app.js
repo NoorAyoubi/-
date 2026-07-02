@@ -102,17 +102,17 @@ function applyLanguage(lang) {
     
     if (lang === 'he') {
         safeSetText('faqTitle', '💬 שאלות נפוצות וחוויות לקוחות');
-        safeSetText('faq1Q', '❓ מה קורה אם נפסיד בתביעה?');
-        safeSetText('faq1A', 'אתה לא משלם כלום. אנו נושאים בכל עלויות הטיפול והבדיקה, ואם לא נצליח להשיג פיצוי, לא תשלם שכר טרחה למשרד בכלל.');
+        safeSetText('faq1Q', '❓ כיצד נקבע גובה הפיצוי הכספי?');
+        safeSetText('faq1A', 'הגובה נקבע בהתאם לאופי התאונה, המסמכים הרפואיים ואחוזי הנכות שנקבעו על ידי הגורמים המוסמכים כגון הביטוח הלאומי.');
         safeSetText('faq2Q', '❓ האם הערכה חכמה מחייבת אותי במשהו?');
         safeSetText('faq2A', 'בכלל לא. ההערכה היא דיסקרטית לחלוטין ומתבצעת בדפדפן שלך. שום מידע לא ישותף אלא אם תבחר בעצמך בסוף לשלוח ולהמשיך לעבוד איתנו.');
         safeSetText('bioTitle', 'משרד עורכי דין גשר אל-קודס');
         safeSetText('bioSubtitle', 'היועץ האנושי והמשפטי המוסמך שלך');
         safeSetText('bioQuote', '"הזכות הכספית שלך אינה חמדנות, אלא פיצוי הוגן שיעזור לך לשקם את חייך ובריאותך. חברות הביטוח תמיד מסתמכות על כך שתדחה את התביעה עד שתתיישן. אנו כאן כדי להקשיב לך ולתמוך בך צעד אחר צעד."');
         safeSetText('footerLogo', '⚖️ משרד עורכי דין גשר אל-קודס');
-        safeSetText('footerServices', 'שירותים');
+        safeSetText('footerServices', 'מי אנחנו');
         safeSetText('footerPrivacy', 'פרטיות');
-        safeSetText('linkServices', 'שירותים');
+        safeSetText('linkServices', 'מי אנחנו');
         safeSetText('linkPrivacy', 'פרטיות');
         safeSetText('footerRights', '© 2026 משרד עורכי דין גשר אל-קודס. כל הזכויות שמורות.');
         safeSetText('chatBadge', 'ייעוץ ראשוני חינם');
@@ -124,17 +124,17 @@ function applyLanguage(lang) {
         safeSetText('badge3', '✅ תוך 2 דקות בלבד');
     } else if (lang === 'en') {
         safeSetText('faqTitle', '💬 Frequently Asked Questions & Client Reviews');
-        safeSetText('faq1Q', '❓ What happens if we lose the claim?');
-        safeSetText('faq1A', 'You pay nothing. We bear all costs, and if we do not succeed in getting compensation, you will not pay any fees to the firm.');
+        safeSetText('faq1Q', '❓ How is the financial compensation amount determined?');
+        safeSetText('faq1A', 'The amount depends on the nature of the accident, medical reports, and the disability percentage estimated by competent authorities such as the National Insurance Institute.');
         safeSetText('faq2Q', '❓ Does the smart evaluation commit me to anything?');
         safeSetText('faq2A', 'Never. The evaluation is completely private on your browser. No info will be shared unless you choose to send it at the end.');
         safeSetText('bioTitle', 'Al-Quds Law Firm');
         safeSetText('bioSubtitle', 'Your Certified Human & Legal Advisor');
         safeSetText('bioQuote', '"Your financial right is not greed, it is fair compensation to help you restore your life and health. Insurance companies always rely on you delaying the claim. We are here to listen and support you step-by-step."');
         safeSetText('footerLogo', '⚖️ Al-Quds Law Firm');
-        safeSetText('footerServices', 'Services');
+        safeSetText('footerServices', 'About Us');
         safeSetText('footerPrivacy', 'Privacy');
-        safeSetText('linkServices', 'Services');
+        safeSetText('linkServices', 'About Us');
         safeSetText('linkPrivacy', 'Privacy');
         safeSetText('footerRights', '© 2026 Al-Quds Law Firm. All rights reserved.');
         safeSetText('chatBadge', 'Free Consultation');
@@ -146,17 +146,17 @@ function applyLanguage(lang) {
         safeSetText('badge3', '✅ Just 2 Minutes');
     } else {
         safeSetText('faqTitle', '💬 الأسئلة الشائعة وتجارب الموكلين');
-        safeSetText('faq1Q', '❓ ماذا يحدث لو خسرنا المطالبة بالتعويض؟');
-        safeSetText('faq1A', 'لا تدفع أي شيء. نحن نتحمل كامل أتعاب المتابعة والبحث، وإذا لم ننجح في تحصيل التعويض، فلن تدفع أي أتعاب للمكتب نهائياً.');
+        safeSetText('faq1Q', '❓ كيف يتم تحديد قيمة التعويض المالي؟');
+        safeSetText('faq1A', 'تعتمد القيمة على طبيعة الحادث، التقارير الطبية، ونسبة العجز المقدرة من الجهات المختصة مثل التأمين الوطني.');
         safeSetText('faq2Q', '❓ هل التقييم الذكي يلزمني بأي شيء؟');
         safeSetText('faq2A', 'أبداً. التقييم سري تماماً ويتم على متصفحك. لن تتم مشاركة أي معلومة إلا إذا اخترت بنفسك في نهاية المطاف إرسالها ومتابعة العمل معنا.');
         safeSetText('bioTitle', 'مكتب جسر القدس القانوني');
         safeSetText('bioSubtitle', 'مستشارك الإنساني والقانوني المعتمد');
         safeSetText('bioQuote', '"حقك المالي ليس طمعاً، بل هو تعويض عادل لمساعدتك على استعادة حياتك وصحتك. شركات التأمين تعتمد دائماً على تأجيلك للمطالبة حتى يسقط حقك بالتقادم. نحن هنا لنسمعك ونسانك خطوة بخطوة."');
         safeSetText('footerLogo', '⚖️ جسر القدس القانوني');
-        safeSetText('footerServices', 'الخدمات');
+        safeSetText('footerServices', 'من نحن');
         safeSetText('footerPrivacy', 'الخصوصية');
-        safeSetText('linkServices', 'الخدمات');
+        safeSetText('linkServices', 'من نحن');
         safeSetText('linkPrivacy', 'الخصوصية');
         safeSetText('footerRights', '© 2026 مكتب جسر القدس للمحاماة والاستشارات القانونية. جميع الحقوق محفوظة.');
         safeSetText('chatBadge', 'استشارة أولية مجانية');
