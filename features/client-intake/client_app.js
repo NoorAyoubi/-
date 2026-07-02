@@ -880,37 +880,33 @@ window.onload = () => {
     // Sync language selection on page load
     applyLanguage(currentLang);
 
+    // Auto-show Welcome Modal on page load (landing page)
+    if (window.showWelcomeModal) {
+        window.showWelcomeModal(currentLang);
+    }
+
     // Chatbot entrance trigger
     if (startBtn) {
         startBtn.onclick = () => {
             if (isIntakeStarted) return;
+            isIntakeStarted = true;
             
-            const launchChat = () => {
-                isIntakeStarted = true;
-                landingPage.style.display = 'none';
-                chatApp.style.display = 'flex';
-                
-                // Reset state variables
-                state = {
-                    category: '',
-                    workLocation: '',
-                    isNegligence: '',
-                    accidentDetails: '',
-                    locationBefore: '',
-                    clientName: '',
-                    clientPhone: ''
-                };
-                chatArea.innerHTML = '';
-                lastBotMsgBubble = null;
-                startIntake();
+            landingPage.style.display = 'none';
+            chatApp.style.display = 'flex';
+            
+            // Reset state variables
+            state = {
+                category: '',
+                workLocation: '',
+                isNegligence: '',
+                accidentDetails: '',
+                locationBefore: '',
+                clientName: '',
+                clientPhone: ''
             };
-            
-            // Safe call with fallback: if WelcomeModal is loaded, show it, else start directly
-            if (window.showWelcomeModal) {
-                window.showWelcomeModal(currentLang, launchChat);
-            } else {
-                launchChat();
-            }
+            chatArea.innerHTML = '';
+            lastBotMsgBubble = null;
+            startIntake();
         };
     }
     

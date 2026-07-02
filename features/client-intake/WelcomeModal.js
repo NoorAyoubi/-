@@ -19,7 +19,7 @@
             beforeTitle: "قبل أن تبدأ:",
             beforeDesc: "سيقوم المساعد الذكي بطرح مجموعة من الأسئلة البسيطة لفهم حالتك بشكل أولي. تستغرق العملية عادة أقل من دقيقتين.",
             privacy: "🔒 معلوماتك تُعامل بسرية تامة.",
-            cta: "👉 ابدأ الاستشارة"
+            guideText: "💡 لبدء الاستشارة، يرجى إغلاق هذه النافذة (×) والضغط على زر \"ابدأ الآن\" بالخلفية."
         },
         he: {
             title: "ברוכים הבאים לגשר אל-קודס המשפטי",
@@ -32,7 +32,7 @@
             beforeTitle: "לפני שמתחילים:",
             beforeDesc: "העוזר החכם ישאל אותך מספר שאלות פשוטות כדי להבין את המקרה שלך באופן ראשוני. התהליך לוקח בדרך כלל פחות משתי דקות.",
             privacy: "🔒 המידע שלך מטופל בסודיות מוחלטת.",
-            cta: "👉 התחל ייעוץ"
+            guideText: "💡 כדי להתחיל את הייעוץ, אנא סגור חלון זה (×) ולחץ על כפתור \"התחל עכשיו\" ברקע."
         },
         en: {
             title: "Welcome to Jerusalem Legal Bridge",
@@ -45,7 +45,7 @@
             beforeTitle: "Before you start:",
             beforeDesc: "The smart assistant will ask simple questions to understand your case initially. The process usually takes less than 2 minutes.",
             privacy: "🔒 Your information is treated with strict confidentiality.",
-            cta: "👉 Start Consultation"
+            guideText: "💡 To start the consultation, please close this window (×) and click the \"Start Now\" button in the background."
         }
     };
 
@@ -161,29 +161,19 @@
                 font-weight: 600;
                 color: #fbbf24;
                 font-size: 0.9rem;
-                margin-bottom: 24px;
+                margin-bottom: 16px;
                 text-align: center;
             }
-            .welcome-cta-container {
-                display: flex;
-                justify-content: center;
-            }
-            .welcome-cta-btn {
-                background: linear-gradient(135deg, #fbbf24, #d97706);
-                color: #0b0f19;
-                border: none;
-                padding: 12px 36px;
-                font-size: 1.05rem;
-                font-weight: 700;
-                border-radius: 25px;
-                cursor: pointer;
-                box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
-                transition: transform 0.2s, box-shadow 0.2s;
-                font-family: inherit;
-            }
-            .welcome-cta-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(251, 191, 36, 0.45);
+            .welcome-info-text {
+                background: rgba(251, 191, 36, 0.05);
+                border: 1px dashed rgba(251, 191, 36, 0.3);
+                border-radius: 8px;
+                padding: 12px;
+                font-size: 0.9rem;
+                color: #fbbf24;
+                text-align: center;
+                line-height: 1.5;
+                font-weight: 600;
             }
             
             /* LTR Direction Adjustments for English */
@@ -224,6 +214,7 @@
         modal.className = "welcome-modal";
         
         modal.innerHTML = `
+            <button class="welcome-close-btn" id="welcomeCloseBtn">&times;</button>
             <h2 class="welcome-title">${t.title}</h2>
             <div class="welcome-spec">${t.spec}</div>
             
@@ -241,10 +232,7 @@
             <p class="welcome-desc">${t.beforeDesc}</p>
             
             <div class="welcome-privacy">${t.privacy}</div>
-            
-            <div class="welcome-cta-container">
-                <button class="welcome-cta-btn" id="welcomeStartBtn">${t.cta}</button>
-            </div>
+            <div class="welcome-info-text">${t.guideText}</div>
         `;
         
         overlay.appendChild(modal);
@@ -270,6 +258,13 @@
         };
         
         // Event Listeners
-        document.getElementById("welcomeStartBtn").onclick = closeWelcome;
+        document.getElementById("welcomeCloseBtn").onclick = closeWelcome;
+        
+        // Close on clicking backdrop overlay
+        overlay.onclick = function(e) {
+            if (e.target === overlay) {
+                closeWelcome();
+            }
+        };
     };
 })();
