@@ -109,9 +109,9 @@
 
 /* Custom premium styling for Select Dropdown */
 select.appointment-input {
-    background-color: #141722;
-    color: var(--text-primary, #ffffff);
-    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    background-color: rgba(197, 168, 128, 0.08);
+    color: var(--accent-gold, #c5a880);
+    border: 1px solid rgba(197, 168, 128, 0.35);
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
