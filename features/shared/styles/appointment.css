@@ -107,6 +107,18 @@
     box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.15);
 }
 
+/* Custom styling for calendar input icon to make it clearly visible and matching the gold theme */
+.appointment-input::-webkit-calendar-picker-indicator {
+    filter: invert(0.8) sepia(1) saturate(5) hue-rotate(15deg);
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.appointment-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
 /* Time slots selection grid */
 .time-slots-grid {
     display: grid;
