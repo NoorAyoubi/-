@@ -17,7 +17,9 @@
             alertDate: "يرجى تحديد التاريخ المفضل.",
             alertTime: "يرجى تحديد الوقت المفضل للموعد.",
             alertName: "يرجى إدخال اسمك الكريم.",
-            alertPhone: "يرجى إدخال رقم هاتف محمول صحيح يتكون من 10 أرقام ويبدأ بـ 05."
+            alertPhone: "يرجى إدخال رقم هاتف محمول صحيح يتكون من 10 أرقام ويبدأ بـ 05.",
+            selectPlaceholder: "-- يرجى اختيار صنف القضية --",
+            alertCategory: "يرجى اختيار صنف القضية من القائمة المتاحة."
         },
         he: {
             linkText: "קביעת תור",
@@ -33,7 +35,9 @@
             alertDate: "נא לבחור תאריך לתור.",
             alertTime: "נא לבחור שעה מועדפת לתור.",
             alertName: "נא להזין שם מלא.",
-            alertPhone: "נא להזין מספר טלפון נייד תקין בן 10 ספרות המתחיל ב-05."
+            alertPhone: "נא להזין מספר טלפון נייד תקין בן 10 ספרות המתחיל ב-05.",
+            selectPlaceholder: "-- נא לבחור סוג פנייה --",
+            alertCategory: "נא לבחור את סוג התיק מהרשימה."
         },
         en: {
             linkText: "Book Appointment",
@@ -49,7 +53,9 @@
             alertDate: "Please select your preferred date.",
             alertTime: "Please select your preferred time slot.",
             alertName: "Please enter your name.",
-            alertPhone: "Please enter a valid 10-digit mobile number starting with 05."
+            alertPhone: "Please enter a valid 10-digit mobile number starting with 05.",
+            selectPlaceholder: "-- Please Select Case Category --",
+            alertCategory: "Please choose a case category from the dropdown."
         }
     };
 
@@ -159,7 +165,7 @@
                         <!-- Notes -->
                         <div class="appointment-form-group">
                             <label class="appointment-label" id="lblClientNotes">خيارات لاختيار صنف القضية:</label>
-                            <select id="appointmentNotes" class="appointment-input">
+                            <select id="appointmentNotes" class="appointment-input" required>
                                 <!-- Options will be dynamically populated/translated -->
                             </select>
                         </div>
@@ -302,7 +308,9 @@
                 ]
             };
             const list = caseOptions[lang] || caseOptions.ar;
-            notesSelect.innerHTML = list.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+            let optionsHtml = `<option value="" disabled selected>${t.selectPlaceholder}</option>`;
+            optionsHtml += list.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+            notesSelect.innerHTML = optionsHtml;
             if (prevValue && list.includes(prevValue)) {
                 notesSelect.value = prevValue;
             }
@@ -330,6 +338,10 @@
         }
         if (!selectedTimeSlot) {
             alert(t.alertTime);
+            return;
+        }
+        if (!notesVal) {
+            alert(t.alertCategory);
             return;
         }
         if (!nameVal) {
