@@ -272,107 +272,38 @@
         const notesSelect = document.getElementById('appointmentNotes');
         if (notesSelect) {
             const prevValue = notesSelect.value;
-            const caseGroups = {
+            const caseOptions = {
                 ar: [
-                    {
-                        label: "⚖️ القضايا المدنية",
-                        options: ["النزاعات المالية", "العقود والالتزامات", "التعويض عن الأضرار", "الملكية والعقارات"]
-                    },
-                    {
-                        label: "⚖️ القضايا الجنائية (الجزائية)",
-                        options: ["السرقة", "الاحتيال", "الاعتداء", "الجرائم الإلكترونية", "القضايا المتعلقة بالمخدرات وغيرها"]
-                    },
-                    {
-                        label: "⚖️ قضايا الأحوال الشخصية (الأسرة)",
-                        options: ["الزواج والطلاق", "النفقة", "الحضانة", "الميراث والوصايا"]
-                    },
-                    {
-                        label: "⚖️ القضايا العمالية",
-                        options: ["حقوق العامل وصاحب العمل", "الفصل من العمل", "الأجور والتعويضات"]
-                    },
-                    {
-                        label: "⚖️ القضايا التجارية",
-                        options: ["النزاعات بين الشركات", "الأوراق التجارية", "الإفلاس", "الشراكات والعقود التجارية"]
-                    },
-                    {
-                        label: "⚖️ القضايا الإدارية",
-                        options: ["الطعون في القرارات الحكومية", "المنازعات مع الجهات العامة"]
-                    },
-                    {
-                        label: "⚖️ القضايا العقارية",
-                        options: ["الملكية", "الإيجارات", "تسجيل الأراضي والحدود"]
-                    }
+                    "القضايا المدنية: (النزاعات المالية - العقود والالتزامات - التعويض عن الأضرار - الملكية والعقارات)",
+                    "القضايا الجنائية (الجزائية): (السرقة - الاحتيال - الاعتداء - الجرائم الإلكترونية - القضايا المتعلقة بالمخدرات وغيرها)",
+                    "قضايا الأحوال الشخصية (الأسرة): (الزواج والطلاق - النفقة - الحضانة - الميراث والوصايا)",
+                    "القضايا العمالية: (حقوق العامل وصاحب العمل - الفصل من العمل - الأجور والتعويضات)",
+                    "القضايا التجارية: (النزاعات بين الشركات - الأوراق التجارية - الإفلاس - الشراكات والعقود التجارية)",
+                    "القضايا الإدارية: (الطعون في القرارات الحكومية - المنازعات مع الجهات العامة)",
+                    "القضايا العقارية: (الملكية - الإيجارات - تسجيل الأراضي والحدود)"
                 ],
                 he: [
-                    {
-                        label: "⚖️ תיקים אזרחיים",
-                        options: ["סכסוכים כספיים", "חוזים והתחייבויות", "פיצוי בגין נזקים", "בעלות ומקרקעין"]
-                    },
-                    {
-                        label: "⚖️ תיקים פליליים",
-                        options: ["גניבה", "מרמה והונאה", "תקיפה", "פשעי סייבר", "עבירות סמים ואחרות"]
-                    },
-                    {
-                        label: "⚖️ מעמד אישי ומשפחה",
-                        options: ["נישואין וגירושין", "מזונות", "משמורת ילדים", "ירושות וצוואות"]
-                    },
-                    {
-                        label: "⚖️ דיני עבודה",
-                        options: ["זכויות עובדים ומעסיקים", "פיטורין מהעבודה", "שכר ופיצויים"]
-                    },
-                    {
-                        label: "⚖️ תיקים מסחריים",
-                        options: ["סכסוכים בין חברות", "מסמכים סחירים", "פשיטת רגל", "שותפויות וחוזים מסחריים"]
-                    },
-                    {
-                        label: "⚖️ תיקים מנהליים",
-                        options: ["ערעור על החלטות ממשלה", "סכסוכים עם גופים ציבוריים"]
-                    },
-                    {
-                        label: "⚖️ תיקי מקרקעין ונדל\"ן",
-                        options: ["בעלות", "שכירות", "רישום מקרקעין וגבולות"]
-                    }
+                    "תיקים אזרחיים: (סכסוכים כספיים - חוזים והתחייבויות - פיצוי בגין נזקים - בעלות ומקרקעין)",
+                    "תיקים פליליים: (גניבה - מרמה והונאה - תקיפה - פשעי סייבר - עבירות סמים ואחרות)",
+                    "מעמד אישי ומשפחה: (נישואין וגירושין - מזונות - משמורת ילדים - ירושות וצוואות)",
+                    "דיני עבודה: (זכויות עובדים ומעסיקים - פיטורין מהעבודה - שכר ופיצויים)",
+                    "תיקים מסחריים: (סכסוכים בין חברות - מסמכים סחירים - פשיטת רגל - שותפויות וחוזים מסחריים)",
+                    "תיקים מנהליים: (ערעור על החלטות ממשלה - סכסוכים עם גופים ציבוריים)",
+                    "תיקי מקרקעין ונדל\"ן: (בעלות - שכירות - רישום מקרקעין וגבולות)"
                 ],
                 en: [
-                    {
-                        label: "⚖️ Civil Cases",
-                        options: ["Financial Disputes", "Contracts & Obligations", "Damage Compensation", "Ownership & Real Estate"]
-                    },
-                    {
-                        label: "⚖️ Criminal Cases",
-                        options: ["Theft", "Fraud", "Assault", "Cybercrimes", "Drug Cases & Others"]
-                    },
-                    {
-                        label: "⚖️ Family & Personal Status",
-                        options: ["Marriage & Divorce", "Alimony / Child Support", "Child Custody", "Inheritance & Wills"]
-                    },
-                    {
-                        label: "⚖️ Labor & Employment",
-                        options: ["Employee & Employer Rights", "Wrongful Dismissal", "Wages & Compensation"]
-                    },
-                    {
-                        label: "⚖️ Commercial Cases",
-                        options: ["Corporate Disputes", "Commercial Papers", "Bankruptcy", "Partnerships & Commercial Contracts"]
-                    },
-                    {
-                        label: "⚖️ Administrative Cases",
-                        options: ["Appeals Against Government Decisions", "Disputes with Public Entities"]
-                    },
-                    {
-                        label: "⚖️ Real Estate Cases",
-                        options: ["Property Ownership", "Rentals / Leases", "Land Registration & Boundaries"]
-                    }
+                    "Civil Cases: (Financial Disputes - Contracts & Obligations - Damage Compensation - Ownership & Real Estate)",
+                    "Criminal Cases: (Theft - Fraud - Assault - Cybercrimes - Drug Cases & Others)",
+                    "Family & Personal Status: (Marriage & Divorce - Alimony / Child Support - Child Custody - Inheritance & Wills)",
+                    "Labor & Employment: (Employee & Employer Rights - Wrongful Dismissal - Wages & Compensation)",
+                    "Commercial Cases: (Corporate Disputes - Commercial Papers - Bankruptcy - Partnerships & Commercial Contracts)",
+                    "Administrative Cases: (Appeals Against Government Decisions - Disputes with Public Entities)",
+                    "Real Estate Cases: (Property Ownership - Rentals / Leases - Land Registration & Boundaries)"
                 ]
             };
-            const groups = caseGroups[lang] || caseGroups.ar;
-            notesSelect.innerHTML = groups.map(group => {
-                const optsHtml = group.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
-                return `<optgroup label="${group.label}">${optsHtml}</optgroup>`;
-            }).join('');
-            
-            // Check if prevValue exists in any of the current groups options
-            const allOptions = groups.flatMap(g => g.options);
-            if (prevValue && allOptions.includes(prevValue)) {
+            const list = caseOptions[lang] || caseOptions.ar;
+            notesSelect.innerHTML = list.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+            if (prevValue && list.includes(prevValue)) {
                 notesSelect.value = prevValue;
             }
         }

@@ -107,6 +107,38 @@
     box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.15);
 }
 
+/* Custom premium styling for Select Dropdown */
+select.appointment-input {
+    background-color: #141722;
+    color: var(--text-primary, #ffffff);
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c5a880' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 16px;
+}
+
+[dir="rtl"] select.appointment-input {
+    background-position: left 14px center;
+    padding-left: 40px;
+    padding-right: 12px;
+}
+
+[dir="ltr"] select.appointment-input {
+    background-position: right 14px center;
+    padding-right: 40px;
+    padding-left: 12px;
+}
+
+select.appointment-input option {
+    background-color: #141722;
+    color: #ffffff;
+    padding: 12px;
+}
+
 /* Custom styling for calendar input icon to make it clearly visible and matching the gold theme */
 .appointment-input::-webkit-calendar-picker-indicator {
     filter: invert(0.8) sepia(1) saturate(5) hue-rotate(15deg);
