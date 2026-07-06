@@ -3,7 +3,6 @@
 (function() {
     const dashboardTranslations = {
         ar: {
-            btnAppointments: "📅 جدول المواعيد",
             appointmentsSectionTitle: "جدول المواعيد المحجوزة للعملاء",
             emptyAppointments: "لا توجد مواعيد محجوزة حالياً.",
             colName: "الاسم",
@@ -23,7 +22,6 @@
             deleteSuccess: "🧹 تم مسح وإلغاء الموعد بنجاح!"
         },
         he: {
-            btnAppointments: "📅 לוח פגישות",
             appointmentsSectionTitle: "ניהול פגישות ותורים של לקוחות",
             emptyAppointments: "אין תורים מוזמנים כעת.",
             colName: "שם",
@@ -43,7 +41,6 @@
             deleteSuccess: "🧹 הפגישה נמחקה ובסיס הנתונים עודכן!"
         },
         en: {
-            btnAppointments: "📅 Schedule Bookings",
             appointmentsSectionTitle: "Manage Client Appointments",
             emptyAppointments: "No appointments scheduled at the moment.",
             colName: "Name",
@@ -72,16 +69,18 @@
     }
 
     function initAppointmentDashboard() {
-        // Ensure we don't init twice
-        if (document.getElementById('btnAppointments')) return;
+        // Ensure leadsSection element exists
+        const leadsSec = document.getElementById('leadsSection');
+        if (!leadsSec) {
+            // Retry in 100ms if not rendered yet
+            setTimeout(initAppointmentDashboard, 100);
+            return;
+        }
 
-        // 1. Create sidebar button
-        insertSidebarButton();
-
-        // 2. Create Section HTML structure
+        // 1. Create Section HTML structure inside leadsSection
         insertSectionContainer();
 
-        // 3. Hook Navigation and Lang selectors
+        // 2. Hook Navigation, Lang selectors, and Render Table wrapper
         hookNavigationAndLang();
 
         // Initialize translations with current active language
@@ -90,29 +89,15 @@
         renderAppointmentsTable();
     }
 
-    // Insert Sidebar Button
-    function insertSidebarButton() {
-        const nav = document.querySelector('.sidebar-nav');
-        if (nav) {
-            const btn = document.createElement('a');
-            btn.href = '#';
-            btn.className = 'nav-item';
-            btn.id = 'btnAppointments';
-            btn.onclick = (e) => {
-                e.preventDefault();
-                activateAppointmentsTab();
-            };
-            nav.appendChild(btn);
-        }
-    }
-
-    // Insert appointments Section Container
+    // Insert appointments Section Container at the bottom of leadsSection
     function insertSectionContainer() {
-        const mainContent = document.querySelector('.main-content');
-        if (mainContent) {
+        const leadsSection = document.getElementById('leadsSection');
+        if (leadsSection && !document.getElementById('appointmentsSection')) {
             const sectionHtml = `
-                <div id="appointmentsSection" style="display: none;">
-                    <h1 class="dashboard-title" id="appointmentsSectionTitle">جدول المواعيد المحجوزة للعملاء</h1>
+                <div id="appointmentsSection" style="margin-top: 48px; border-top: 1px dashed var(--card-border, rgba(255, 255, 255, 0.12)); padding-top: 36px;">
+                    <h1 class="dashboard-title" id="appointmentsSectionTitle" style="display: flex; align-items: center; justify-content: space-between;">
+                        <span>جدول المواعيد المحجوزة للعملاء</span>
+                    </h1>
                     <div class="table-container">
                         <table class="leads-table">
                             <thead>
@@ -129,57 +114,22 @@
             `;
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = sectionHtml;
-            mainContent.appendChild(tempDiv.firstElementChild);
+            leadsSection.appendChild(tempDiv.firstElementChild);
         }
-    }
-
-    // Switch view to Appointments tab
-    function activateAppointmentsTab() {
-        // Hide original dashboard sections
-        const leadsSec = document.getElementById('leadsSection');
-        const archiveSec = document.getElementById('archiveSection');
-        const settingsSec = document.getElementById('settingsSection');
-        if (leadsSec) leadsSec.style.display = 'none';
-        if (archiveSec) archiveSec.style.display = 'none';
-        if (settingsSec) settingsSec.style.display = 'none';
-
-        // Remove active class from standard buttons
-        const btnL = document.getElementById('btnLeads');
-        const btnA = document.getElementById('btnArchive');
-        const btnS = document.getElementById('btnSettings');
-        if (btnL) btnL.classList.remove('active');
-        if (btnA) btnA.classList.remove('active');
-        if (btnS) btnS.classList.remove('active');
-
-        // Activate custom appointments section
-        const appointmentsSec = document.getElementById('appointmentsSection');
-        const btnApp = document.getElementById('btnAppointments');
-        if (appointmentsSec) appointmentsSec.style.display = 'block';
-        if (btnApp) btnApp.classList.add('active');
-
-        renderAppointmentsTable();
     }
 
     // Hook original functions
     function hookNavigationAndLang() {
-        // Wrap original switchTab to hide appointmentsSection
-        if (typeof switchTab !== 'undefined') {
-            const originalSwitchTab = switchTab;
-            switchTab = function(activeBtn, showSection) {
-                // Hide custom section
-                const appointmentsSec = document.getElementById('appointmentsSection');
-                if (appointmentsSec) appointmentsSec.style.display = 'none';
-
-                // Remove active class from custom button
-                const btnApp = document.getElementById('btnAppointments');
-                if (btnApp) btnApp.classList.remove('active');
-
-                // Call original
-                originalSwitchTab(activeBtn, showSection);
+        // Wrap original renderTable to auto-update appointments and sum badge count
+        if (typeof renderTable !== 'undefined') {
+            const originalRenderTable = renderTable;
+            renderTable = function(submissions) {
+                originalRenderTable(submissions);
+                renderAppointmentsTable();
             };
         }
 
-        // Wrap original applyLanguage (to support lang updates)
+        // Wrap original applyLanguage
         if (typeof applyLanguage !== 'undefined') {
             const originalApplyLanguage = applyLanguage;
             applyLanguage = function(lang) {
@@ -201,18 +151,12 @@
     function translateDashboardUI(lang) {
         const t = dashboardTranslations[lang] || dashboardTranslations.ar;
 
-        // Sidebar link text
-        const btnApp = document.getElementById('btnAppointments');
-        if (btnApp) {
-            // Retain badge if exists
-            let badge = document.getElementById('appointmentsBadge');
-            btnApp.innerHTML = `${t.btnAppointments}`;
-            if (badge) btnApp.appendChild(badge);
-        }
-
         // Section Title
         const secTitle = document.getElementById('appointmentsSectionTitle');
-        if (secTitle) secTitle.innerText = t.appointmentsSectionTitle;
+        if (secTitle) {
+            const titleSpan = secTitle.querySelector('span');
+            if (titleSpan) titleSpan.innerText = t.appointmentsSectionTitle;
+        }
 
         // Table headers
         const headRow = document.getElementById('appointmentsTableHead');
@@ -240,7 +184,7 @@
 
         const appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
 
-        // Update counts badge
+        // Update counts badge combined with leads badge
         updatePendingAppointmentsBadge(appointments);
 
         if (appointments.length === 0) {
@@ -286,25 +230,50 @@
         });
     }
 
-    // Update notification badge count in sidebar
+    // Update notification badge count inside leads badge (sum of leads + appointments)
     function updatePendingAppointmentsBadge(appointments) {
-        const btnApp = document.getElementById('btnAppointments');
-        if (!btnApp) return;
-
-        let badge = document.getElementById('appointmentsBadge');
-        const pendingCount = appointments.filter(a => a.status === 'pending').length;
-
-        if (pendingCount > 0) {
-            if (!badge) {
-                badge = document.createElement('span');
-                badge.id = 'appointmentsBadge';
-                badge.className = 'appointments-count-badge';
-                btnApp.appendChild(badge);
+        const badge = document.getElementById('leadsBadge');
+        if (badge) {
+            let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
+            const pendingLeadsCount = submissions.filter(item => !item.processed).length;
+            const pendingAppointmentsCount = appointments.filter(a => a.status === 'pending').length;
+            
+            const totalCount = pendingLeadsCount + pendingAppointmentsCount;
+            if (totalCount > 0) {
+                badge.innerText = totalCount;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
             }
-            badge.innerText = pendingCount;
-            badge.style.display = 'inline-block';
-        } else {
-            if (badge) badge.style.display = 'none';
+        }
+
+        // Also add badge in section header
+        const secTitle = document.getElementById('appointmentsSectionTitle');
+        if (secTitle) {
+            const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
+            const t = dashboardTranslations[activeLang] || dashboardTranslations.ar;
+            const pendingAppointmentsCount = appointments.filter(a => a.status === 'pending').length;
+            
+            // Remove old badge span if exists
+            const oldSpan = secTitle.querySelector('.appointments-header-badge');
+            if (oldSpan) oldSpan.remove();
+
+            if (pendingAppointmentsCount > 0) {
+                const badgeSpan = document.createElement('span');
+                badgeSpan.className = 'appointments-header-badge';
+                badgeSpan.style.cssText = `
+                    font-size: 0.85rem; 
+                    color: var(--accent-gold); 
+                    background: rgba(197, 168, 128, 0.1); 
+                    padding: 4px 12px; 
+                    border-radius: 20px; 
+                    font-weight: bold;
+                    margin-right: 12px;
+                    margin-left: 12px;
+                `;
+                badgeSpan.innerText = activeLang === 'he' ? `${pendingAppointmentsCount} ממתינים` : (activeLang === 'en' ? `${pendingAppointmentsCount} pending` : `${pendingAppointmentsCount} معلّق`);
+                secTitle.appendChild(badgeSpan);
+            }
         }
     }
 
