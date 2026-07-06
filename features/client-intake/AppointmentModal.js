@@ -10,7 +10,7 @@
             selectTime: "اختر وقت الحجز المتاح:",
             clientName: "الاسم الكريم:",
             clientPhone: "رقم الهاتف المحمول:",
-            clientNotes: "ملاحظات إضافية (اختياري):",
+            clientNotes: "خيارات لاختيار صنف القضية:",
             btnSubmit: "تأكيد طلب الموعد",
             btnCancelClose: "إلغاء وإغلاق",
             successToast: "🎉 تم إرسال طلب حجز الموعد بنجاح. سنتواصل معك لتأكيده!",
@@ -26,7 +26,7 @@
             selectTime: "בחר שעה פנויה:",
             clientName: "שם מלא:",
             clientPhone: "מספר טלפון נייד:",
-            clientNotes: "הערות נוספות (אופציונלי):",
+            clientNotes: "אפשרויות לבחירת סוג התיק:",
             btnSubmit: "אישור בקשת תור",
             btnCancelClose: "ביטול וסגירה",
             successToast: "🎉 בקשת התור נשלחה בהצלחה! ניצור איתך קשר בהקדם.",
@@ -42,7 +42,7 @@
             selectTime: "Select Available Time Slot:",
             clientName: "Full Name:",
             clientPhone: "Mobile Phone Number:",
-            clientNotes: "Additional Notes (Optional):",
+            clientNotes: "Options to select the case category:",
             btnSubmit: "Confirm Appointment Request",
             btnCancelClose: "Cancel & Close",
             successToast: "🎉 Appointment request submitted successfully! We will contact you to confirm.",
@@ -158,8 +158,10 @@
 
                         <!-- Notes -->
                         <div class="appointment-form-group">
-                            <label class="appointment-label" id="lblClientNotes">ملاحظات إضافية (اختياري):</label>
-                            <textarea id="appointmentNotes" class="appointment-textarea" rows="3" placeholder="..."></textarea>
+                            <label class="appointment-label" id="lblClientNotes">خيارات لاختيار صنف القضية:</label>
+                            <select id="appointmentNotes" class="appointment-input">
+                                <!-- Options will be dynamically populated/translated -->
+                            </select>
                         </div>
 
                         <!-- Submit -->
@@ -266,6 +268,36 @@
 
         const notesLbl = document.getElementById('lblClientNotes');
         if (notesLbl) notesLbl.innerText = t.clientNotes;
+
+        const notesSelect = document.getElementById('appointmentNotes');
+        if (notesSelect) {
+            const prevValue = notesSelect.value;
+            const caseOptions = {
+                ar: [
+                    "🚗 حادث سير / مرور",
+                    "🏢 إصابة عمل / ورشة",
+                    "⚖️ استشارة قانونية عامة",
+                    "➕ إصابات وجروح أخرى"
+                ],
+                he: [
+                    "🚗 תאונת דרכים / תחבורה",
+                    "🏢 תאונת עבודה",
+                    "⚖️ ייעוץ משפטי כללי",
+                    "➕ פציעות וחבלות אחרות"
+                ],
+                en: [
+                    "🚗 Car / Traffic Accident",
+                    "🏢 Work / Site Injury",
+                    "⚖️ General Legal Consultation",
+                    "➕ Other Injuries / Claims"
+                ]
+            };
+            const list = caseOptions[lang] || caseOptions.ar;
+            notesSelect.innerHTML = list.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+            if (prevValue && list.includes(prevValue)) {
+                notesSelect.value = prevValue;
+            }
+        }
 
         const submitBtn = document.getElementById('btnConfirmAppointment');
         if (submitBtn) submitBtn.innerText = t.btnSubmit;
