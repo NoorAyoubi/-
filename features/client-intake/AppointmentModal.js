@@ -280,6 +280,8 @@
             const prevValue = notesSelect.value;
             const caseOptions = {
                 ar: [
+                    "قضايا حوادث السير: (حوادث المركبات - حوادث الدهس - حوادث الدراجات النارية - مطالبات التأمين - التعويض عن أضرار المركبات - التعويض عن الإصابات الناتجة عن الحوادث - الوفاة الناتجة عن حوادث السير)",
+                    "قضايا الإصابات: (الإصابات الشخصية - إصابات العمل - الأخطاء الطبية - العجز المؤقت والدائم - التعويض عن الأضرار الجسدية - التعويض عن الأضرار المعنوية - فقدان القدرة على العمل)",
                     "القضايا المدنية: (النزاعات المالية - العقود والالتزامات - التعويض عن الأضرار - الملكية والعقارات)",
                     "القضايا الجنائية (الجزائية): (السرقة - الاحتيال - الاعتداء - الجرائم الإلكترونية - القضايا المتعلقة بالمخدرات وغيرها)",
                     "قضايا الأحوال الشخصية (الأسرة): (الزواج والطلاق - النفقة - الحضانة - الميراث والوصايا)",
@@ -289,6 +291,8 @@
                     "القضايا العقارية: (الملكية - الإيجارات - تسجيل الأراضي والحدود)"
                 ],
                 he: [
+                    "תביעות תאונות דרכים: (תאונות רכב - תאונות דריסה - תאונות אופנוע - תביעות ביטוח - פיצוי על נזקי רכב - פיצוי על פגיעות גוף מתאונות - מוות כתוצאה מתאונת דרכים)",
+                    "תביעות נזקי גוף ופציעות: (פציעות אישיות - תאונות עבודה - רשלנות רפואית - נכות זמנית וצמיתה - פיצוי על נזק גופני - פיצוי על נזק לא ממוני - אובדן כושר עבודה)",
                     "תיקים אזרחיים: (סכסוכים כספיים - חוזים והתחייבויות - פיצוי בגין נזקים - בעלות ומקרקעין)",
                     "תיקים פליליים: (גניבה - מרמה והונאה - תקיפה - פשעי סייבר - עבירות סמים ואחרות)",
                     "מעמד אישי ומשפחה: (נישואין וגירושין - מזונות - משמורת ילדים - ירושות וצוואות)",
@@ -298,6 +302,8 @@
                     "תיקי מקרקעין ונדל\"ן: (בעלות - שכירות - רישום מקרקעין וגבולות)"
                 ],
                 en: [
+                    "Traffic Accidents: (Vehicle Accidents - Pedestrian Accidents - Motorcycle Accidents - Insurance Claims - Vehicle Damage Compensation - Injury Compensation - Fatal Road Accidents)",
+                    "Injury Claims: (Personal Injury - Work Injuries - Medical Malpractice - Temporary & Permanent Disability - Physical Damage Compensation - Moral Damage Compensation - Loss of Earning Capacity)",
                     "Civil Cases: (Financial Disputes - Contracts & Obligations - Damage Compensation - Ownership & Real Estate)",
                     "Criminal Cases: (Theft - Fraud - Assault - Cybercrimes - Drug Cases & Others)",
                     "Family & Personal Status: (Marriage & Divorce - Alimony / Child Support - Child Custody - Inheritance & Wills)",
