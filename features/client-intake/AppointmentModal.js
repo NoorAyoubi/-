@@ -133,7 +133,7 @@
                         <!-- Date selector -->
                         <div class="appointment-form-group">
                             <label class="appointment-label" id="lblSelectDate">اختر التاريخ المفضل:</label>
-                            <input type="date" id="appointmentDate" class="appointment-input" required min="${new Date().toISOString().split('T')[0]}">
+                            <input type="date" id="appointmentDate" class="appointment-input" required lang="en" min="${new Date().toISOString().split('T')[0]}">
                         </div>
 
                         <!-- Time slot selector grid -->
