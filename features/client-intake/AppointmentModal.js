@@ -301,6 +301,15 @@
         const title = document.getElementById('appointmentModalTitle');
         if (title) title.innerText = t.modalTitle;
 
+        const dateInput = document.getElementById('appointmentDate');
+        const dateHelper = document.getElementById('appointmentDateHelper');
+        if (dateInput) {
+            dateInput.style.textAlign = (lang === 'en') ? 'left' : 'right';
+        }
+        if (dateHelper) {
+            dateHelper.setAttribute('lang', lang === 'he' ? 'he' : (lang === 'en' ? 'en' : 'ar'));
+        }
+
         const dateLbl = document.getElementById('lblSelectDate');
         if (dateLbl) dateLbl.innerText = t.selectDate;
 
