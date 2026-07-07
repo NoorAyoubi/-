@@ -107,6 +107,17 @@
     box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.15);
 }
 
+/* Prevent browser autofill from breaking the dark/gold theme colors */
+.appointment-input:-webkit-autofill,
+.appointment-input:-webkit-autofill:hover, 
+.appointment-input:-webkit-autofill:focus,
+.appointment-input:-webkit-autofill:active {
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0 1000px #181b25 inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08)) !important;
+}
+
 /* Custom premium styling for Select Dropdown */
 select.appointment-input {
     background-color: rgba(255, 255, 255, 0.03);
