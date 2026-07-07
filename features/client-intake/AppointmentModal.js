@@ -134,11 +134,11 @@
                         <div class="appointment-form-group">
                             <label class="appointment-label" id="lblSelectDate">اختر التاريخ المفضل:</label>
                             <div style="position: relative; width: 100%;">
-                                <input type="date" id="appointmentDate" class="appointment-input" required min="${new Date().toISOString().split('T')[0]}" style="padding-right: 40px; padding-left: 12px; direction: ltr; text-align: left; color: transparent;">
-                                <span id="datePlaceholderText" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: rgba(255, 255, 255, 0.4); font-family: inherit; font-size: 0.95rem; direction: ltr;">YYYY-MM-DD</span>
-                                <span class="custom-calendar-icon" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; cursor: pointer; display: flex; align-items: center;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a880" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                </span>
+                                <input type="text" id="appointmentDate" class="appointment-input" required placeholder="YYYY-MM-DD" style="padding-right: 40px; padding-left: 12px; direction: ltr; text-align: left;">
+                                <div class="custom-calendar-icon" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a880" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    <input type="date" id="appointmentDateHelper" min="${new Date().toISOString().split('T')[0]}" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0;">
+                                </div>
                             </div>
                         </div>
 
@@ -225,22 +225,17 @@
             setTimeout(checkFilled, 150);
         });
 
-        // Hide native date format text and show overlay custom placeholder YYYY-MM-DD
+        // Bind calendar helper date picker to visible text input
         const dateInput = document.getElementById('appointmentDate');
-        const datePlaceholder = document.getElementById('datePlaceholderText');
-        if (dateInput && datePlaceholder) {
-            const updateDateDisplay = () => {
-                if (dateInput.value) {
-                    dateInput.style.color = 'var(--text-primary, #ffffff)';
-                    datePlaceholder.style.display = 'none';
-                } else {
-                    dateInput.style.color = 'transparent';
-                    datePlaceholder.style.display = 'block';
+        const dateHelper = document.getElementById('appointmentDateHelper');
+        if (dateInput && dateHelper) {
+            dateHelper.addEventListener('change', () => {
+                if (dateHelper.value) {
+                    dateInput.value = dateHelper.value;
+                    dateInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    dateInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
-            };
-            dateInput.addEventListener('input', updateDateDisplay);
-            dateInput.addEventListener('change', updateDateDisplay);
-            updateDateDisplay();
+            });
         }
     }
 
@@ -434,7 +429,9 @@
         // Clear fields
         document.getElementById('appointmentForm').reset();
         const dateInput = document.getElementById('appointmentDate');
+        const dateHelper = document.getElementById('appointmentDateHelper');
         if (dateInput) dateInput.dispatchEvent(new Event('change'));
+        if (dateHelper) dateHelper.value = '';
         selectedTimeSlot = '';
         document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('active'));
     };
