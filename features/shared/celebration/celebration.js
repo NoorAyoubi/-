@@ -1,13 +1,13 @@
 function startCelebration(message) {
-    // Play local camel audio sound
+    // Play local confetti success sound
     try {
-        const camelAudio = new Audio('features/shared/celebration/camel.mp3');
-        camelAudio.volume = 0.6;
-        camelAudio.play().catch(e => {
-            console.log("Camel audio play was prevented by browser autoplay policy:", e);
+        const confettiAudio = new Audio('features/shared/celebration/confetti.mp3');
+        confettiAudio.volume = 0.6;
+        confettiAudio.play().catch(e => {
+            console.log("Confetti audio play was prevented by browser autoplay policy:", e);
         });
     } catch (err) {
-        console.error("Failed to play camel sound:", err);
+        console.error("Failed to play confetti sound:", err);
     }
 
     let canvas = document.getElementById('celebrationCanvas');
