@@ -330,37 +330,37 @@
             const prevValue = notesSelect.value;
             const caseOptions = {
                 ar: [
-                    "قضايا حوادث السير: (حوادث المركبات - حوادث الدهس - حوادث الدراجات النارية - مطالبات التأمين - التعويض عن أضرار المركبات - التعويض عن الإصابات الناتجة عن الحوادث - الوفاة الناتجة عن حوادث السير)",
-                    "قضايا الإصابات: (الإصابات الشخصية - إصابات العمل - الأخطاء الطبية - العجز المؤقت والدائم - التعويض عن الأضرار الجسدية - التعويض عن الأضرار المعنوية - فقدان القدرة على العمل)",
-                    "القضايا المدنية: (النزاعات المالية - العقود والالتزامات - التعويض عن الأضرار - الملكية والعقارات)",
-                    "القضايا الجنائية (الجزائية): (السرقة - الاحتيال - الاعتداء - الجرائم الإلكترونية - القضايا المتعلقة بالمخدرات وغيرها)",
-                    "قضايا الأحوال الشخصية (الأسرة): (الزواج والطلاق - النفقة - الحضانة - الميراث والوصايا)",
-                    "القضايا العمالية: (حقوق العامل وصاحب العمل - الفصل من العمل - الأجور والتعويضات)",
-                    "القضايا التجارية: (النزاعات بين الشركات - الأوراق التجارية - الإفلاس - الشراكات والعقود التجارية)",
-                    "القضايا الإدارية: (الطعون في القرارات الحكومية - المنازعات مع الجهات العامة)",
-                    "القضايا العقارية: (الملكية - الإيجارات - تسجيل الأراضي والحدود)"
+                    "قضايا حوادث السير: (حوادث المركبات، الدهس، التأمين، التعويضات والوفاة)",
+                    "قضايا الإصابات: (الإصابات الشخصية، إصابات العمل، الأخطاء الطبية، العجز والتعويض)",
+                    "القضايا المدنية: (النزاعات المالية، العقود، التعويض عن الأضرار، الملكية والعقارات)",
+                    "القضايا الجنائية (الجزائية): (السرقة، الاحتيال، الاعتداء، الجرائم الإلكترونية، المخدرات)",
+                    "قضايا الأحوال الشخصية (الأسرة): (الزواج، الطلاق، النفقة، الحضانة، الميراث والوصايا)",
+                    "القضايا العمالية: (حقوق العمل، الفصل، الأجور والتعويضات)",
+                    "القضايا التجارية: (النزاعات، الشركات، الأوراق التجارية، الإفلاس والعقود)",
+                    "القضايا الإدارية: (الطعون في القرارات الحكومية والمنازعات العامة)",
+                    "القضايا العقارية: (الملكية، الإيجارات، تسجيل الأراضي والحدود)"
                 ],
                 he: [
-                    "תביעות תאונות דרכים: (תאונות רכב - תאונות דריסה - תאונות אופנוע - תביעות ביטוח - פיצוי על נזקי רכב - פיצוי על פגיעות גוף מתאונות - מוות כתוצאה מתאונת דרכים)",
-                    "תביעות נזקי גוף ופציעות: (פציעות אישיות - תאונות עבודה - רשלנות רפואית - נכות זמנית וצמיתה - פיצוי על נזק גופני - פיצוי על נזק לא ממוני - אובדן כושר עבודה)",
-                    "תיקים אזרחיים: (סכסוכים כספיים - חוזים והתחייבויות - פיצוי בגין נזקים - בעלות ומקרקעין)",
-                    "תיקים פליליים: (גניבה - מרמה והונאה - תקיפה - פשעי סייבר - עבירות סמים ואחרות)",
-                    "מעמד אישי ומשפחה: (נישואין וגירושין - מזונות - משמורת ילדים - ירושות וצוואות)",
-                    "דיני עבודה: (זכויות עובדים ומעסיקים - פיטורין מהעבודה - שכר ופיצויים)",
-                    "תיקים מסחריים: (סכסוכים בין חברות - מסמכים סחירים - פשיטת רגל - שותפויות וחוזים מסחריים)",
-                    "תיקים מנהליים: (ערעור על החלטות ממשלה - סכסוכים עם גופים ציבוריים)",
-                    "תיקי מקרקעין ונדל\"ן: (בעלות - שכירות - רישום מקרקעין וגבולות)"
+                    "תביעות תאונות דרכים: (תאונות רכב, דריסה, ביטוח, נזקי גוף ומוות)",
+                    "תביעות נזקי גוף ופציעות: (פציעות אישיות, תאונות עבודה, רשלנות רפואית, נכות ופיצויים)",
+                    "תיקים אזרחיים: (סכסוכים כספיים, חוזים, פיצוי בגין נזקים, בעלות ומקרקעין)",
+                    "תיקים פליליים: (גניבה, מרמה, תקיפה, פשעי סייבר, עבירות סמים)",
+                    "מעמד אישי ומשפחה: (גירושין, מזונות, משמורת ילדים, ירושות וצוואות)",
+                    "דיני עבודה: (זכויות עובדים, פיטורין, שכר ופיצויים)",
+                    "תיקים מסחריים: (סכסוכים, חברות, מסמכים סחירים, פשיטת רגל וחוזים)",
+                    "תיקים מנהליים: (ערעור על החלטות ממשלה, סכסוכים עם גופים ציבוריים)",
+                    "תיקי מקרקעין ונדל\"ן: (בעלות, שכירות, רישום מקרקעין וגבולות)"
                 ],
                 en: [
-                    "Traffic Accidents: (Vehicle Accidents - Pedestrian Accidents - Motorcycle Accidents - Insurance Claims - Vehicle Damage Compensation - Injury Compensation - Fatal Road Accidents)",
-                    "Injury Claims: (Personal Injury - Work Injuries - Medical Malpractice - Temporary & Permanent Disability - Physical Damage Compensation - Moral Damage Compensation - Loss of Earning Capacity)",
-                    "Civil Cases: (Financial Disputes - Contracts & Obligations - Damage Compensation - Ownership & Real Estate)",
-                    "Criminal Cases: (Theft - Fraud - Assault - Cybercrimes - Drug Cases & Others)",
-                    "Family & Personal Status: (Marriage & Divorce - Alimony / Child Support - Child Custody - Inheritance & Wills)",
-                    "Labor & Employment: (Employee & Employer Rights - Wrongful Dismissal - Wages & Compensation)",
-                    "Commercial Cases: (Corporate Disputes - Commercial Papers - Bankruptcy - Partnerships & Commercial Contracts)",
-                    "Administrative Cases: (Appeals Against Government Decisions - Disputes with Public Entities)",
-                    "Real Estate Cases: (Property Ownership - Rentals / Leases - Land Registration & Boundaries)"
+                    "Traffic Accidents: (Vehicle Accidents, Insurance, Injury & Fatal Claims)",
+                    "Injury Claims: (Personal Injury, Work Injuries, Medical Malpractice, Disability & Damages)",
+                    "Civil Cases: (Financial Disputes, Contracts, Damages, Property & Ownership)",
+                    "Criminal Cases: (Theft, Fraud, Assault, Cybercrimes, Drug Offenses)",
+                    "Family & Personal Status: (Marriage, Divorce, Alimony, Child Custody, Wills & Estate)",
+                    "Labor & Employment: (Employment Rights, Wrongful Dismissal, Wages & Compensation)",
+                    "Commercial Cases: (Disputes, Corporate, Commercial Papers, Bankruptcy & Contracts)",
+                    "Administrative Cases: (Appeals Against Government Decisions & Public Disputes)",
+                    "Real Estate Cases: (Property Ownership, Rentals, Land Registry & Boundaries)"
                 ]
             };
             const list = caseOptions[lang] || caseOptions.ar;

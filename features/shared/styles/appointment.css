@@ -144,10 +144,23 @@ select.appointment-input {
     padding-left: 12px;
 }
 
+select.appointment-input {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
 select.appointment-input option {
     background-color: #141722;
     color: #ffffff;
     padding: 12px;
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+[dir="ltr"] select.appointment-input,
+[dir="ltr"] select.appointment-input option {
+    direction: ltr !important;
+    text-align: left !important;
 }
 
 /* Custom styling for calendar input icon - hide the native one to use our gold SVG */
