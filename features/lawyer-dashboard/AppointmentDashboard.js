@@ -71,11 +71,11 @@
             if (typeof playChime === 'function') playChime();
             
             const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-            const title = activeLang === 'he' ? "📅 תור חדש התקבל!" : (activeLang === 'en' ? "📅 New Appointment Request!" : "📅 طلب حجز موعد جديد!");
+            const title = "🔔 Lawyer AI";
             
-            const bodyText = activeLang === 'he' ? `התקבל תור חדש מ:\n${appt.name}\nלתאריך: ${appt.date} בשעה ${appt.time}` : 
-                            (activeLang === 'en' ? `New appointment from:\n${appt.name}\nFor: ${appt.date} at ${appt.time}` : 
-                            `وصلك طلب موعد جديد من:\n${appt.name}\nبتاريخ: ${appt.date} الساعة ${appt.time}`);
+            const bodyText = activeLang === 'he' ? `פנייה חדשה\nהתקבל תור חדש מ:\n${appt.name}\n(${appt.date} - ${appt.time})` : 
+                            (activeLang === 'en' ? `New Request\nNew appointment request from:\n${appt.name}\n(${appt.date} - ${appt.time})` : 
+                            `طلب جديد\nوصلك طلب موعد جديد من:\n${appt.name}\n(${appt.date} - ${appt.time})`);
             
             const options = {
                 body: bodyText,
