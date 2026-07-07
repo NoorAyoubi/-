@@ -164,6 +164,16 @@ select.appointment-input option {
     background-color: rgba(197, 168, 128, 0.04) !important;
 }
 
+/* Completely hide native browser date placeholder/format text when empty */
+.appointment-input:not(.filled)::-webkit-datetime-edit {
+    color: transparent !important;
+    opacity: 0 !important;
+}
+.appointment-input:not(.filled)::-moz-datetime-edit {
+    color: transparent !important;
+    opacity: 0 !important;
+}
+
 /* Time slots selection grid */
 .time-slots-grid {
     display: grid;
