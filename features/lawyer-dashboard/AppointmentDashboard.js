@@ -308,6 +308,41 @@
 
         if (confirm(t.confirmDelete)) {
             let appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
+            const appt = appointments.find(a => a.id == id);
+
+            if (appt) {
+                // Add to jlm_legal_submissions as processed (archived client)
+                let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
+                
+                const leadLang = appt.lang || 'ar';
+                const noteText = leadLang === 'he' ? `תור בוטל/נמחק: ${appt.date} - ${appt.time}` : 
+                               (leadLang === 'en' ? `Canceled/Deleted Appointment: ${appt.date} - ${appt.time}` : 
+                               `موعد ملغى/محذوف: ${appt.date} - ${appt.time}`);
+                               
+                const newLead = {
+                    id: appt.id,
+                    clientName: appt.name,
+                    clientPhone: appt.phone,
+                    dateSent: new Date(appt.id).toLocaleDateString('en-GB'),
+                    category: appt.notes,
+                    workLocation: "---",
+                    isNegligence: "---",
+                    accidentDetails: noteText,
+                    locationBefore: "---",
+                    processed: true, // Mark as processed/archived
+                    submissionLang: leadLang
+                };
+                
+                submissions.push(newLead);
+                localStorage.setItem('jlm_legal_submissions', JSON.stringify(submissions));
+                
+                // Trigger reload of the main dashboard leads/archive tables if available
+                if (typeof loadSubmissions === 'function') {
+                    loadSubmissions();
+                }
+            }
+
+            // Filter out of active appointments list
             appointments = appointments.filter(a => a.id != id);
             localStorage.setItem('jlm_appointment_requests', JSON.stringify(appointments));
             
