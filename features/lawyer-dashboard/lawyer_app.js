@@ -146,6 +146,9 @@ function applyLanguage(lang) {
     
     // Refresh Table contents
     loadSubmissions();
+    if (typeof checkNotificationPermissionAndShowBanner === 'function') {
+        checkNotificationPermissionAndShowBanner();
+    }
 }
 
 function updateTableHeaders(t) {
@@ -665,9 +668,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     applyLanguage(initLang);
     
-    // Request desktop notification permission on startup
+    // Request desktop notification permission on startup safely
     if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-        Notification.requestPermission();
+        Notification.requestPermission().then(() => {
+            checkNotificationPermissionAndShowBanner();
+        });
+    } else {
+        checkNotificationPermissionAndShowBanner();
     }
 });
 
@@ -675,6 +682,10 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('storage', (e) => {
     if (e.key === 'jlm_legal_submissions') {
         loadSubmissions();
+    } else if (e.key === 'jlm_appointment_requests') {
+        if (typeof renderAppointmentsTable === 'function') {
+            renderAppointmentsTable();
+        }
     }
 });
 
@@ -684,4 +695,72 @@ setInterval(loadSubmissions, 3000);
 // Run on Load
 window.onload = function() {
     applyLanguage(initLang);
+};
+
+// Check and request notification permissions via custom dashboard banner
+function checkNotificationPermissionAndShowBanner() {
+    if ("Notification" in window && Notification.permission !== "granted") {
+        const mainContent = document.querySelector('.main-content');
+        if (!mainContent) return;
+        
+        // Remove existing banner first
+        const oldBanner = document.getElementById('notificationEnableBanner');
+        if (oldBanner) oldBanner.remove();
+        
+        const banner = document.createElement('div');
+        banner.id = 'notificationEnableBanner';
+        banner.style.cssText = `
+            background: rgba(197, 168, 128, 0.08); 
+            border: 1px solid var(--accent-gold); 
+            border-radius: 12px; 
+            padding: 16px 24px; 
+            margin-bottom: 24px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 16px;
+            direction: ${currentLang === 'en' ? 'ltr' : 'rtl'};
+        `;
+        
+        let text = '';
+        let btnText = '';
+        if (currentLang === 'he') {
+            text = "🔔 לקבלת התראות וצלצול בזמן אמת בעת קבלת פנייה או תור חדש, אנא אשר שליחת התראות בדפדפן.";
+            btnText = "אשר התראות 🔔";
+        } else if (currentLang === 'en') {
+            text = "🔔 To receive live audio and desktop notifications when new leads or bookings arrive, please enable notifications.";
+            btnText = "Enable Notifications 🔔";
+        } else {
+            text = "🔔 لتلقي تنبيهات صوتية وإشعارات لحظية فورية عند وصول حجز أو رسالة جديدة، يرجى تفعيل الإشعارات في المتصفح.";
+            btnText = "تفعيل الإشعارات 🔔";
+        }
+        
+        banner.innerHTML = `
+            <span style="font-size: 0.95rem; color: var(--text-primary); font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                ${text}
+            </span>
+            <button onclick="requestNotificationPermissionFromBanner()" class="btn-primary" style="padding: 10px 20px; font-size: 0.85rem; font-weight: bold; border-radius: 8px; border: none; background: var(--accent-gold); color: var(--bg-dark) !important; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                ${btnText}
+            </button>
+        `;
+        
+        mainContent.insertBefore(banner, mainContent.firstChild);
+    }
+}
+
+window.requestNotificationPermissionFromBanner = function() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                // Play a test chime to unlock AudioContext
+                if (typeof playChime === 'function') {
+                    playChime();
+                }
+                const banner = document.getElementById('notificationEnableBanner');
+                if (banner) banner.remove();
+            } else {
+                alert(currentLang === 'he' ? "נא לאשר התראות בהגדרות הדפדפן שלך." : (currentLang === 'en' ? "Please enable notifications in your browser settings." : "يرجى تفعيل الإشعارات من إعدادات المتصفح الخاص بك."));
+            }
+        });
+    }
 };
