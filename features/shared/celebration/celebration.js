@@ -1,4 +1,15 @@
 function startCelebration(message) {
+    // Play local camel audio sound
+    try {
+        const camelAudio = new Audio('features/shared/celebration/camel.mp3');
+        camelAudio.volume = 0.6;
+        camelAudio.play().catch(e => {
+            console.log("Camel audio play was prevented by browser autoplay policy:", e);
+        });
+    } catch (err) {
+        console.error("Failed to play camel sound:", err);
+    }
+
     let canvas = document.getElementById('celebrationCanvas');
     if (!canvas) {
         canvas = document.createElement('canvas');
