@@ -252,13 +252,3 @@ select.appointment-input option {
     display: inline-block;
     vertical-align: middle;
 }
-
-/* Calendar integration buttons style */
-.calendar-btn:hover {
-    background-color: rgba(197, 168, 128, 0.08) !important;
-    border-color: var(--accent-gold, #c5a880) !important;
-    transform: translateY(-1px);
-}
-.calendar-btn {
-    transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
-}
