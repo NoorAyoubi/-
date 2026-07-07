@@ -224,6 +224,7 @@ html, body {
     height: 100vh;
     z-index: 99998;
     pointer-events: none;
+    background: rgba(13, 15, 23, 0.97);
 }
 
 @keyframes bounce {
