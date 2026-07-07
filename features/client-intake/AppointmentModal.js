@@ -244,7 +244,25 @@
         const overlay = document.getElementById('appointmentModal');
         if (!overlay) return;
 
-        // Reset previous selections
+        // Scroll modal content back to the top
+        const modalContent = document.querySelector('.appointment-modal-content');
+        if (modalContent) {
+            modalContent.scrollTop = 0;
+        }
+
+        // Reset form inputs completely
+        const form = document.getElementById('appointmentForm');
+        if (form) {
+            form.reset();
+            // Clear filled glow states
+            const inputs = form.querySelectorAll('.appointment-input');
+            inputs.forEach(input => {
+                input.classList.remove('filled');
+                input.dispatchEvent(new Event('change'));
+            });
+        }
+
+        // Reset time slot selections
         selectedTimeSlot = '';
         document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('active'));
         
