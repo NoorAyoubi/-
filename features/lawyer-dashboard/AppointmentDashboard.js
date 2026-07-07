@@ -61,6 +61,49 @@
         }
     };
 
+    let knownAppointmentIds = new Set();
+    let isFirstApptLoad = true;
+
+    function triggerAppointmentNotification(appt) {
+        if (!("Notification" in window)) return;
+        
+        const showNotification = () => {
+            if (typeof playChime === 'function') playChime();
+            
+            const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
+            const title = activeLang === 'he' ? "📅 תור חדש התקבל!" : (activeLang === 'en' ? "📅 New Appointment Request!" : "📅 طلب حجز موعد جديد!");
+            
+            const bodyText = activeLang === 'he' ? `התקבל תור חדש מ:\n${appt.name}\nלתאריך: ${appt.date} בשעה ${appt.time}` : 
+                            (activeLang === 'en' ? `New appointment from:\n${appt.name}\nFor: ${appt.date} at ${appt.time}` : 
+                            `وصلك طلب موعد جديد من:\n${appt.name}\nبتاريخ: ${appt.date} الساعة ${appt.time}`);
+            
+            const options = {
+                body: bodyText,
+                requireInteraction: true
+            };
+            const n = new Notification(title, options);
+            n.onclick = function() {
+                window.focus();
+                const btnLeads = document.getElementById('btnLeads');
+                const leadsSection = document.getElementById('leadsSection');
+                if (btnLeads && leadsSection && typeof switchTab === 'function') {
+                    switchTab(btnLeads, leadsSection);
+                }
+                n.close();
+            };
+        };
+        
+        if (Notification.permission === "granted") {
+            showNotification();
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    showNotification();
+                }
+            });
+        }
+    }
+
     // Wait until document body is available
     if (document.body) {
         initAppointmentDashboard();
@@ -183,6 +226,17 @@
         const t = dashboardTranslations[activeLang] || dashboardTranslations.ar;
 
         const appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
+
+        // Check for new appointments to trigger notifications
+        if (!isFirstApptLoad) {
+            appointments.forEach(app => {
+                if (app.status === 'pending' && !knownAppointmentIds.has(app.id)) {
+                    triggerAppointmentNotification(app);
+                }
+            });
+        }
+        knownAppointmentIds = new Set(appointments.map(a => a.id));
+        isFirstApptLoad = false;
 
         // Update counts badge combined with leads badge
         updatePendingAppointmentsBadge(appointments);

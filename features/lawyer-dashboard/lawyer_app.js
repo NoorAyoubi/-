@@ -283,6 +283,9 @@ function loadSubmissions() {
     isFirstLoad = false;
     
     renderTable(submissions);
+    if (typeof renderAppointmentsTable === 'function') {
+        renderAppointmentsTable();
+    }
 }
 
 // Play synth chime notification tone using Web Audio API
