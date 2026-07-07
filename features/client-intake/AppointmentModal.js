@@ -202,6 +202,22 @@
                 selectedTimeSlot = btn.getAttribute('data-time');
             };
         });
+
+        // Bind form input filled/glow listeners
+        const formInputs = document.querySelectorAll('.appointment-input');
+        formInputs.forEach(input => {
+            const checkFilled = () => {
+                if (input.value && input.value !== "") {
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
+            };
+            input.addEventListener('input', checkFilled);
+            input.addEventListener('change', checkFilled);
+            // Run initial check
+            setTimeout(checkFilled, 150);
+        });
     }
 
     // Open Modal and pre-fill details from chatbot session
@@ -218,8 +234,14 @@
             const nameField = document.getElementById('appointmentName');
             const phoneField = document.getElementById('appointmentPhone');
             
-            if (nameField && state.clientName) nameField.value = state.clientName;
-            if (phoneField && state.clientPhone) phoneField.value = state.clientPhone;
+            if (nameField && state.clientName) {
+                nameField.value = state.clientName;
+                nameField.dispatchEvent(new Event('change'));
+            }
+            if (phoneField && state.clientPhone) {
+                phoneField.value = state.clientPhone;
+                phoneField.dispatchEvent(new Event('change'));
+            }
         }
 
         overlay.classList.add('active');
