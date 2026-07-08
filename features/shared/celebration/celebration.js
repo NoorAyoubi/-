@@ -1,7 +1,7 @@
 function startCelebration(message) {
-    // Play local confetti success sound
+    // Play local confetti success sound (short popper pop)
     try {
-        const confettiAudio = new Audio('features/shared/celebration/confetti.mp3');
+        const confettiAudio = new Audio('features/shared/celebration/confetti.wav');
         confettiAudio.volume = 0.6;
         confettiAudio.play().catch(e => {
             console.log("Confetti audio play was prevented by browser autoplay policy:", e);
