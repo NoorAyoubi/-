@@ -1,0 +1,102 @@
+/* 📬 Outlook Web Portal Embedding Component Stylesheet */
+
+.outlook-portal-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    gap: 16px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.outlook-portal-header {
+    background: var(--card-bg, #1a1d26);
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.outlook-portal-title-block h2 {
+    margin: 0;
+    color: var(--text-primary, #ffffff);
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.outlook-portal-title-block p {
+    margin: 4px 0 0 0;
+    color: var(--text-secondary, #a0aec0);
+    font-size: 0.85rem;
+}
+
+.outlook-iframe-viewport {
+    flex: 1;
+    background: #0d0f17;
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.outlook-iframe-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #12141c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+.outlook-fallback-icon {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+    animation: bounce 2s infinite;
+}
+
+.outlook-iframe-fallback h3 {
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    font-size: 1.25rem;
+}
+
+.outlook-iframe-fallback p {
+    color: var(--text-secondary, #a0aec0);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 0 24px 0;
+}
+
+.outlook-embedded-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #ffffff;
+    position: relative;
+    z-index: 20;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
