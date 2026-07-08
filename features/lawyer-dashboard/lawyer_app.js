@@ -272,10 +272,10 @@ function loadSubmissions() {
         }
     }
     
-    // Notify on new submissions
+    // Notify on new submissions (only unprocessed leads to avoid lawyer self-notifications on deletion/update)
     if (!isFirstLoad) {
         submissions.forEach(lead => {
-            if (!knownSubmissionIds.has(lead.id)) {
+            if (!lead.processed && !knownSubmissionIds.has(lead.id)) {
                 triggerDesktopNotification(lead);
             }
         });
