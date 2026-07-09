@@ -1,37 +1,74 @@
-/* 📬 Isolated Outlook Web Portal Injection Component */
+/* 📬 Isolated Outlook & Microsoft 365 Web Portal Injection Component */
 
 (function() {
     const portalTranslations = {
         ar: {
             sidebarLink: "📬 بريد وتقويم Outlook",
-            title: "بوابة Microsoft Outlook المدمجة",
-            desc: "تصفح البريد الإلكتروني، والتقويم، وإدارة مهام مكتبك مباشرة من داخل لوحة التحكم.",
-            btnPopout: "فتح في نافذة منفصلة 🚀",
-            fallbackTitle: "مستعرض Outlook المدمج",
-            fallbackDesc: "قد تمنع سياسة حماية مايكروسوفت تسجيل الدخول المباشر داخل الإطارات لبعض المتصفحات والحسابات الشخصية. يرجى النقر أدناه لفتح بريد Outlook الحقيقي في نافذة عمل منبثقة سريعة ومتصلة بموقعنا.",
-            btnFallback: "🚀 تسجيل الدخول لبريد Outlook الحقيقي"
+            title: "بوابة Microsoft 365 المدمجة",
+            desc: "الوصول السريع إلى تطبيقات مايكروسوفت أوفيس وإدارة أعمال مكتبك بلمسة واحدة.",
+            btnPopout: "فتح Outlook الحقيقي 🚀",
+            panelTitle: "لوحة تطبيقات Microsoft 365 لبيئة عمل المحامي",
+            panelDesc: "انقر على أي تطبيق في شريط الأدوات لفتحه فوراً في نافذة منبثقة سريعة. سيتعرف المتصفح تلقائياً على حساب مايكروسوفت النشط على جهازك لتسجيل الدخول الفوري دون كتابة بياناتك من جديد.",
+            tooltipMail: "بريد Outlook (العلبة الواردة)",
+            tooltipCalendar: "تقويم Outlook (المواعيد)",
+            tooltipCopilot: "Copilot المساعد الذكي",
+            tooltipPeople: "الأشخاص والجهات",
+            tooltipTasks: "المهام To-Do",
+            tooltipOneDrive: "OneDrive التخزين السحابي",
+            tooltipWord: "Word المستندات",
+            tooltipExcel: "Excel الجداول",
+            tooltipPowerPoint: "PowerPoint العروض",
+            quickStartTitle: "تطبيقات الوصول السريع"
         },
         he: {
             sidebarLink: "📬 דואר ויומן Outlook",
-            title: "פורטל Microsoft Outlook המובנה",
-            desc: "נהל את הדואר האלקטרוני, לוח השנה והמשימות של משרדך ישירות מתוך לוח הבקרה.",
-            btnPopout: "פתח בחלון נפרד 🚀",
-            fallbackTitle: "דפדפן Outlook מובנה",
-            fallbackDesc: "מדיניות האבטחה של מיקרוסופט עשויה למנוע התחברות ישירה בתוך מסגרות בדפדפנים מסוימים. אנא לחץ למטה כדי לפתוח את דואר Outlook האמיתי בחלון עבודה מהיר ומחובר.",
-            btnFallback: "🚀 התחבר לחשבון Outlook האמיתי"
+            title: "פורטל Microsoft 365 המובנה",
+            desc: "גישה מהירה לאפליקציות אופיס וניהול העבודה של משרדך בנגיעה אחת.",
+            btnPopout: "פתח את Outlook האמיתי 🚀",
+            panelTitle: "לוח אפליקציות Microsoft 365 לסביבת העבודה של עורך הדין",
+            panelDesc: "לחץ על כל אפליקציה בסרגל הכלים כדי לפתוח אותה מיידית בחלון מהיר. הדפדפן יזהה אוטומטית את חשבון המיקרוסופט הפעיל במחשב שלך לצורך התחברות מהירה ללא צורך בהזנת פרטים מחדש.",
+            tooltipMail: "דואר Outlook (דואר נכנס)",
+            tooltipCalendar: "יומן Outlook (פגישות)",
+            tooltipCopilot: "Copilot עוזר חכם",
+            tooltipPeople: "אנשי קשר",
+            tooltipTasks: "משימות To-Do",
+            tooltipOneDrive: "OneDrive אחסון בענן",
+            tooltipWord: "Word מסמכים",
+            tooltipExcel: "Excel גיליונות נתונים",
+            tooltipPowerPoint: "PowerPoint מצגות",
+            quickStartTitle: "גישה מהירה לאפליקציות"
         },
         en: {
             sidebarLink: "📬 Outlook Mail & Calendar",
-            title: "Integrated Microsoft Outlook Portal",
-            desc: "Browse email, calendar, and manage your law office tasks directly from within the dashboard.",
-            btnPopout: "Open in Pop-out Window 🚀",
-            fallbackTitle: "Outlook Embedded Portal",
-            fallbackDesc: "Microsoft security policies may restrict direct login inside frames for some browsers and personal accounts. Click below to launch your real Outlook mail in a fast, standalone work window.",
-            btnFallback: "🚀 Sign in to Real Outlook Mail"
+            title: "Integrated Microsoft 365 Portal",
+            desc: "Fast access to Microsoft Office applications and manage your law office in one click.",
+            btnPopout: "Open Real Outlook 🚀",
+            panelTitle: "Microsoft 365 App Launchpad for Lawyers",
+            panelDesc: "Click any application on the toolbar to launch it instantly in a pop-out window. The browser will automatically detect the active Microsoft account on your computer for instant login without re-typing credentials.",
+            tooltipMail: "Outlook Mail (Inbox)",
+            tooltipCalendar: "Outlook Calendar (Schedule)",
+            tooltipCopilot: "Copilot AI Assistant",
+            tooltipPeople: "People & Contacts",
+            tooltipTasks: "To-Do Tasks",
+            tooltipOneDrive: "OneDrive Cloud Storage",
+            tooltipWord: "Word Documents",
+            tooltipExcel: "Excel Spreadsheets",
+            tooltipPowerPoint: "PowerPoint Presentations",
+            quickStartTitle: "Quick Access Apps"
         }
     };
 
-    const targetMailUrl = "https://outlook.live.com/mail/";
+    const appsDatabase = {
+        mail: { url: "https://outlook.live.com/mail/", icon: "features/shared/celebration/options/option1_mail.png", fallbackEmoji: "✉️" },
+        calendar: { url: "https://outlook.live.com/calendar/", icon: "features/shared/celebration/options/option2_calendar.png", fallbackEmoji: "📅" },
+        copilot: { url: "https://copilot.microsoft.com/", icon: "features/shared/celebration/options/option3_copilot.png", fallbackEmoji: "🎨" },
+        people: { url: "https://outlook.live.com/people/", icon: "features/shared/celebration/options/option4_people.png", fallbackEmoji: "👥" },
+        tasks: { url: "https://to-do.office.com/", icon: "features/shared/celebration/options/option5_tasks.png", fallbackEmoji: "✔️" },
+        onedrive: { url: "https://onedrive.live.com/", icon: "features/shared/celebration/options/option6_onedrive.png", fallbackEmoji: "☁️" },
+        word: { url: "https://www.microsoft365.com/launch/word", icon: "features/shared/celebration/options/option7_word.png", fallbackEmoji: "📘" },
+        excel: { url: "https://www.microsoft365.com/launch/excel", icon: "features/shared/celebration/options/option8_excel.png", fallbackEmoji: "📗" },
+        powerpoint: { url: "https://www.microsoft365.com/launch/powerpoint", icon: "features/shared/celebration/options/option9_powerpoint.png", fallbackEmoji: "📙" }
+    };
 
     // Check DOM state and initialize
     if (document.body) {
@@ -44,7 +81,6 @@
         const sidebarNav = document.querySelector('.sidebar-nav');
         const mainContent = document.querySelector('.main-content');
         if (!sidebarNav || !mainContent) {
-            // Retry if main dashboard layout is not loaded yet
             setTimeout(injectOutlookPortal, 100);
             return;
         }
@@ -54,7 +90,7 @@
             const link = document.createElement('link');
             link.id = 'outlookPortalCss';
             link.rel = 'stylesheet';
-            link.href = 'features/shared/styles/outlook_portal.css?v=1.0.0';
+            link.href = 'features/shared/styles/outlook_portal.css?v=1.0.1';
             document.head.appendChild(link);
         }
 
@@ -99,19 +135,15 @@
             }
         };
 
-        // Wrap original switchTab to support hiding/resetting our injected view
         if (typeof switchTab !== 'undefined') {
             const originalSwitchTab = switchTab;
             switchTab = function(activeBtn, showSection) {
-                // Reset active class for our injected button
                 const btnOutlook = document.getElementById('btnOutlook');
                 if (btnOutlook) btnOutlook.classList.remove('active');
 
-                // Hide our section
                 const outlookSection = document.getElementById('outlookSection');
                 if (outlookSection) outlookSection.style.display = 'none';
 
-                // Call original logic
                 originalSwitchTab(activeBtn, showSection);
             };
         }
@@ -150,48 +182,121 @@
                     <h2>${t.title}</h2>
                     <p>${t.desc}</p>
                 </div>
-                <button class="btn-primary" onclick="launchOutlookPopout()" style="background-color: var(--accent-gold); color: var(--bg-dark) !important; font-weight: bold; font-size: 0.85rem; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;">
+                <button class="btn-primary" onclick="launchOutlookPopout('${appsDatabase.mail.url}')" style="background-color: var(--accent-gold); color: var(--bg-dark) !important; font-weight: bold; font-size: 0.85rem; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;">
                     <span>${t.btnPopout}</span>
                 </button>
             </div>
 
-            <div class="outlook-iframe-viewport">
-                <!-- Fallback card underneath iframe to catch loading errors / blocked frame -->
-                <div class="outlook-iframe-fallback">
-                    <div class="outlook-fallback-icon">📬</div>
-                    <h3>${t.fallbackTitle}</h3>
-                    <p>${t.fallbackDesc}</p>
-                    <button class="btn-primary" onclick="launchOutlookPopout()" style="background-color: var(--accent-gold); color: var(--bg-dark) !important; font-weight: bold; border: none; border-radius: 8px; padding: 12px 28px; cursor: pointer;">
-                        ${t.btnFallback}
-                    </button>
-                </div>
+            <!-- Double Column layout: Left App Launchpad, Right Microsoft 365 Toolbar -->
+            <div class="outlook-portal-workspace" style="display: flex; gap: 24px; flex: 1;">
                 
-                <!-- Web View Iframe loading real Outlook Web Mail -->
-                <iframe class="outlook-embedded-frame" id="outlookIframe" src="${targetMailUrl}" title="Microsoft Outlook Web Application"></iframe>
+                <!-- Main application dashboard details (Left) -->
+                <div class="outlook-portal-details-card" style="flex: 1; background: var(--card-bg, #1a1d26); border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08)); border-radius: 12px; padding: 32px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 20px; display: inline-flex; align-items: center; justify-content: center; width: 90px; height: 90px; background: rgba(197, 168, 128, 0.08); border-radius: 20px; border: 1px solid rgba(197, 168, 128, 0.2);">
+                        <span style="color: var(--accent-gold);">🚀</span>
+                    </div>
+                    <h3 style="color: #ffffff; font-size: 1.4rem; margin: 0 0 12px 0;">${t.panelTitle}</h3>
+                    <p style="color: var(--text-secondary, #a0aec0); font-size: 0.95rem; line-height: 1.6; max-width: 580px; margin: 0 0 28px 0;">${t.panelDesc}</p>
+                    
+                    <div style="width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 24px;">
+                        <span style="color: var(--accent-gold); font-weight: bold; font-size: 0.9rem; letter-spacing: 0.5px; text-transform: uppercase;">${t.quickStartTitle}</span>
+                        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px;">
+                            <button class="btn-primary" onclick="launchOutlookPopout('${appsDatabase.mail.url}')" style="padding: 12px 24px; border-radius: 8px;">✉️ Mail</button>
+                            <button class="btn-primary" onclick="launchOutlookPopout('${appsDatabase.calendar.url}')" style="padding: 12px 24px; border-radius: 8px;">📅 Calendar</button>
+                            <button class="btn-primary" onclick="launchOutlookPopout('${appsDatabase.tasks.url}')" style="padding: 12px 24px; border-radius: 8px;">✔️ To-Do</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Microsoft 365 Vertically Aligned Sidebar Toolbar (Right) -->
+                <div class="outlook-portal-bar" style="width: 70px; background: var(--card-bg, #1a1d26); border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08)); border-radius: 12px; display: flex; flex-direction: column; align-items: center; padding: 18px 0; gap: 14px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
+                    
+                    <!-- Outlook Mail Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.mail.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipMail}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.mail.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- Outlook Calendar Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.calendar.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipCalendar}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.calendar.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- Copilot Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.copilot.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipCopilot}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.copilot.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- People Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.people.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipPeople}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.people.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- Tasks To-Do Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.tasks.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipTasks}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.tasks.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- OneDrive Cloud Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.onedrive.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipOneDrive}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.onedrive.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- Divider -->
+                    <div style="width: 32px; height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <!-- Word Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.word.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipWord}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.word.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- Excel Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.excel.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipExcel}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.excel.fallbackEmoji}</span>
+                    </div>
+
+                    <!-- PowerPoint Icon -->
+                    <div class="outlook-bar-icon-wrapper" onclick="launchOutlookPopout('${appsDatabase.powerpoint.url}')" style="cursor: pointer; position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;" title="${t.tooltipPowerPoint}">
+                        <span style="font-size: 1.8rem;">${appsDatabase.powerpoint.fallbackEmoji}</span>
+                    </div>
+
+                </div>
+
             </div>
         `;
 
-        // Attempt iframe load check
-        const iframe = document.getElementById('outlookIframe');
-        if (iframe) {
-            iframe.onload = function() {
-                // If it successfully fires load, we can hide the fallback under normal conditions
-                const fallback = document.querySelector('.outlook-iframe-fallback');
-                if (fallback) fallback.style.display = 'none';
-            };
+        // Inject custom hover transition styles dynamically for the vertical sidebar toolbar
+        injectToolbarHoverStyles();
+    }
+
+    function injectToolbarHoverStyles() {
+        if (!document.getElementById('outlookToolbarHoverStyles')) {
+            const style = document.createElement('style');
+            style.id = 'outlookToolbarHoverStyles';
+            style.innerHTML = `
+                .outlook-bar-icon-wrapper:hover {
+                    background: rgba(197, 168, 128, 0.08) !important;
+                    transform: scale(1.08);
+                    box-shadow: 0 0 10px rgba(197, 168, 128, 0.2);
+                }
+                .outlook-bar-icon-wrapper:active {
+                    transform: scale(0.95);
+                }
+            `;
+            document.head.appendChild(style);
         }
     }
 
-    // Helper window launch popout
-    window.launchOutlookPopout = function() {
-        const width = 1024;
-        const height = 768;
+    // Helper window launch popout with dynamic coordinates
+    window.launchOutlookPopout = function(url) {
+        const width = 1100;
+        const height = 800;
         const left = (window.screen.width - width) / 2;
         const top = (window.screen.height - height) / 2;
+        
         window.open(
-            targetMailUrl, 
-            'Microsoft Outlook Workspace', 
-            `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
+            url, 
+            '_blank', 
+            `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`
         );
     };
 })();
