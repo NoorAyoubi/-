@@ -232,7 +232,7 @@ def build_hebrew_presentation():
     create_title_slide(
         prs,
         "גשר אל-קודס (JLM Legal Bridge)",
-        "פלטפורמת אינטייק דיגיטלית חכמה ומותאמת תרבותית למזרח ירושלים",
+        "פלטפורמה דיגיטלית חכמה לניהול הקשר בין עורך הדין ללקוח, זימון תורים והערכת סיכויי תביעה מבוססת AI",
         ["פרויקט גמר בניהול מוצר 2026", "הקריה האקדמית אונו", "מגיש: עורך דין גשר אל-קודס"],
         is_rtl=True
     )
@@ -392,7 +392,7 @@ def build_hebrew_presentation():
         is_rtl=True
     )
 
-    prs.save("final_presentation_slides_he.pptx")
+    prs.save("final_presentation_slides_he_updated.pptx")
     print("Hebrew presentation saved successfully.")
 
 # ==========================================
@@ -407,7 +407,7 @@ def build_arabic_presentation():
     create_title_slide(
         prs,
         "جسر القدس القانوني (JLM Legal Bridge)",
-        "منصة استبيان رقمية ذكية ومتوافقة ثقافياً للعمال في القدس الشرقية",
+        "منصة رقمية ذكية لتسهيل وإدارة العلاقة بين المحامي والموكل، حجز المواعيد، وتقييم أهلية القضايا بالذكاء الاصطناعي",
         ["مشروع التخرج في مساق إدارة المنتجات 2026", "الكلية الأكاديمية أونو (OAC)", "تقديم: فريق مشروع جسر القدس"],
         is_rtl=True
     )
@@ -567,7 +567,7 @@ def build_arabic_presentation():
         is_rtl=True
     )
 
-    prs.save("final_presentation_slides_ar.pptx")
+    prs.save("final_presentation_slides_ar_updated.pptx")
     print("Arabic presentation saved successfully.")
 
 if __name__ == '__main__':
