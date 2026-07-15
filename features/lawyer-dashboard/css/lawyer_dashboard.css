@@ -129,3 +129,110 @@
     background-color: var(--accent-gold);
     color: #000000;
 }
+
+/* Lawyer Welcome Banner and Stats styling */
+.lawyer-welcome-banner {
+    background: linear-gradient(135deg, rgba(21, 28, 44, 0.95), rgba(27, 38, 59, 0.9));
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    font-family: 'Cairo', 'Outfit', sans-serif;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.lawyer-welcome-banner:hover {
+    border-color: rgba(251, 191, 36, 0.4);
+}
+
+.greeting-container {
+    flex: 1;
+    min-width: 280px;
+}
+
+[dir="rtl"] .greeting-container {
+    text-align: right;
+}
+
+[dir="ltr"] .greeting-container {
+    text-align: left;
+}
+
+.greeting-container h2 {
+    color: #fbbf24;
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.greeting-container p {
+    color: #cbd5e1;
+    margin: 0;
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.lawyer-stats-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 110px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.pending {
+    background: rgba(251, 191, 36, 0.06);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.stat-card.pending strong {
+    font-size: 1.6rem;
+    color: #fbbf24;
+}
+
+.stat-card.processed {
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.stat-card.processed strong {
+    font-size: 1.6rem;
+    color: #10b981;
+}
+
+.stat-card.helped {
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.stat-card.helped strong {
+    font-size: 1.6rem;
+    color: #3b82f6;
+}
+
+.stat-card span {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}

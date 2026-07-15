@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="features/lawyer-dashboard/css/lawyer_dashboard.css?v=1.0.4">
     <link rel="stylesheet" href="features/shared/styles/appointment.css?v=1.0.8">
 </head>
+
 <body>
 
     <div class="dashboard-layout">
@@ -31,6 +33,29 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
+            <!-- Warm Welcome & Achievement Stats Banner -->
+            <div class="lawyer-welcome-banner" id="lawyerWelcomeBanner">
+                <div class="greeting-container">
+                    <h2 id="txtLawyerGreeting">أهلاً بك زميلنا العزيز! ⚖️</h2>
+                    <p id="txtMotivationQuote">"نصرة المظلوم ومساعدة المصابين هي جوهر رسالتنا القانونية والإنسانية. يومك
+                        سعيد وموفق!"</p>
+                </div>
+                <div class="lawyer-stats-container">
+                    <div class="stat-card pending">
+                        <span id="txtStatPending">طلبات معلقة</span>
+                        <strong id="statCountPending">0</strong>
+                    </div>
+                    <div class="stat-card processed">
+                        <span id="txtStatProcessed">تمت المعالجة</span>
+                        <strong id="statCountProcessed">0</strong>
+                    </div>
+                    <div class="stat-card helped">
+                        <span id="txtStatHelped">من ساعدتهم 🌟</span>
+                        <strong id="statCountHelped">0</strong>
+                    </div>
+                </div>
+            </div>
+
             <!-- 1. Leads Section -->
             <div id="leadsSection">
                 <h1 class="dashboard-title">إدارة طلبات إصابات العمل الواردة</h1>
@@ -80,10 +105,14 @@
             <!-- 3. Settings Section -->
             <div id="settingsSection" style="display: none;">
                 <h1 class="dashboard-title">إعدادات نظام جسر القدس القانوني</h1>
-                <div class="feature-card" style="text-align: right; max-width: 600px; display: flex; flex-direction: column; gap: 20px; padding: 30px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;">
+                <div class="feature-card"
+                    style="text-align: right; max-width: 600px; display: flex; flex-direction: column; gap: 20px; padding: 30px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;">
                     <h3>🛠️ تفريغ الأرشيف والبيانات المعالجة</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.6;">يمكنك مسح وتفريغ أرشيف الموكلين الذين تمت معالجتهم بالفعل للتنظيف، مع الحفاظ على كافة الطلبات الجديدة المعلقة دون تعديل:</p>
-                    <button class="btn-primary" onclick="resetDatabase()" style="background-color: #ef4444; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s;">⚠️ تفريغ الأرشيف والعملاء المعالجة قضاياهم</button>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">يمكنك مسح وتفريغ أرشيف الموكلين الذين تمت
+                        معالجتهم بالفعل للتنظيف، مع الحفاظ على كافة الطلبات الجديدة المعلقة دون تعديل:</p>
+                    <button class="btn-primary" onclick="resetDatabase()"
+                        style="background-color: #ef4444; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s;">⚠️
+                        تفريغ الأرشيف والعملاء المعالجة قضاياهم</button>
                 </div>
             </div>
         </main>
@@ -100,14 +129,22 @@
         </div>
     </div>
 
+    <!-- Shared Services -->
+    <script src="features/shared/js/storage.js?v=1.0.0"></script>
+    <script src="features/shared/js/translation.js?v=1.0.1"></script>
+    <script src="features/shared/js/ui-helper.js?v=1.0.0"></script>
+
     <!-- Main Application Scripts -->
-    <script src="features/lawyer-dashboard/lawyer_lang.js?v=1.0.4"></script>
+    <script src="features/lawyer-dashboard/lawyer_lang.js?v=1.0.5"></script>
     <script src="features/shared/celebration/celebration.js?v=1.0.4"></script>
     <script src="features/lawyer-dashboard/lawyer_notifications.js?v=1.0.4"></script>
-    <script src="features/lawyer-dashboard/lawyer_app.js?v=1.0.4"></script>
+    <script src="features/lawyer-dashboard/lawyer_app.js?v=1.0.5"></script>
     <!-- Appointment Booking Dashboard Isolated Component -->
     <script src="features/lawyer-dashboard/AppointmentDashboard.js?v=1.0.8"></script>
     <!-- Microsoft Outlook Web Portal Dynamic Embedding Component -->
-    <script src="features/lawyer-dashboard/OutlookPortal.js?v=1.0.0"></script>
+    <script src="features/lawyer-dashboard/OutlookPortal.js?v=1.0.1"></script>
+    <!-- Pomodoro Productivity Timer Embedding Component -->
+    <script src="features/lawyer-dashboard/PomodoroPortal.js?v=1.0.1"></script>
 </body>
+
 </html>

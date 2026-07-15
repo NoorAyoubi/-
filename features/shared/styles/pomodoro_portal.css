@@ -1,0 +1,89 @@
+/* ⏱️ Pomodoro Web Portal Embedding Component Stylesheet */
+
+.pomodoro-portal-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    gap: 16px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.pomodoro-portal-header {
+    background: var(--card-bg, #1a1d26);
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.pomodoro-portal-title-block h2 {
+    margin: 0;
+    color: var(--text-primary, #ffffff);
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.pomodoro-portal-title-block p {
+    margin: 4px 0 0 0;
+    color: var(--text-secondary, #a0aec0);
+    font-size: 0.85rem;
+}
+
+.pomodoro-iframe-viewport {
+    flex: 1;
+    background: #1b0c0c; /* Styled warm dark background for Pomodoro */
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.pomodoro-embedded-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    position: relative;
+    z-index: 20;
+}
+
+/* Fallback card styling */
+.pomodoro-portal-details-card {
+    flex: 1;
+    background: var(--card-bg, #1a1d26);
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.pomodoro-bar-icon-wrapper:hover {
+    background: rgba(197, 168, 128, 0.08) !important;
+    transform: scale(1.08);
+    box-shadow: 0 0 10px rgba(197, 168, 128, 0.2);
+}
+
+.pomodoro-bar-icon-wrapper:active {
+    transform: scale(0.95);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}

@@ -1,64 +1,8 @@
-/* 📅 Isolated Appointment Booking Component for Client Intake */
-
+/**
+ * 📅 AppointmentModal.js - Isolated Appointment Booking Component for Client Intake
+ * Rebuilt to use JLM.TranslationService and JLM.StorageService.
+ */
 (function() {
-    // 1. Translations dictionary for Appointment Booking
-    const appointmentTranslations = {
-        ar: {
-            linkText: "حجز موعد",
-            modalTitle: "📅 طلب حجز موعد جديد",
-            selectDate: "اختر التاريخ المفضل:",
-            selectTime: "اختر وقت الحجز المتاح:",
-            clientName: "الاسم الكريم:",
-            clientPhone: "رقم الهاتف المحمول:",
-            clientNotes: "خيارات لاختيار صنف القضية:",
-            btnSubmit: "تأكيد طلب الموعد",
-            btnCancelClose: "إلغاء وإغلاق",
-            successToast: "🎉 تم إرسال طلب حجز الموعد بنجاح. سنتواصل معك لتأكيده!",
-            alertDate: "يرجى تحديد التاريخ المفضل.",
-            alertTime: "يرجى تحديد الوقت المفضل للموعد.",
-            alertName: "يرجى إدخال اسمك الكريم.",
-            alertPhone: "يرجى إدخال رقم هاتف محمول صحيح يتكون من 10 أرقام ويبدأ بـ 05.",
-            selectPlaceholder: "-- يرجى اختيار صنف القضية --",
-            alertCategory: "يرجى اختيار صنف القضية من القائمة المتاحة."
-        },
-        he: {
-            linkText: "קביעת תור",
-            modalTitle: "📅 בקשת קביעת תור חדש",
-            selectDate: "בחר תאריך מועדף:",
-            selectTime: "בחר שעה פנויה:",
-            clientName: "שם מלא:",
-            clientPhone: "מספר טלפון נייד:",
-            clientNotes: "אפשרויות לבחירת סוג התיק:",
-            btnSubmit: "אישור בקשת תור",
-            btnCancelClose: "ביטול וסגירה",
-            successToast: "🎉 בקשת התור נשלחה בהצלחה! ניצור איתך קשר בהקדם.",
-            alertDate: "נא לבחור תאריך לתור.",
-            alertTime: "נא לבחור שעה מועדפת לתור.",
-            alertName: "נא להזין שם מלא.",
-            alertPhone: "נא להזין מספר טלפון נייד תקין בן 10 ספרות המתחיל ב-05.",
-            selectPlaceholder: "-- נא לבחור סוג פנייה --",
-            alertCategory: "נא לבחור את סוג התיק מהרשימה."
-        },
-        en: {
-            linkText: "Book Appointment",
-            modalTitle: "📅 Request New Appointment",
-            selectDate: "Select Preferred Date:",
-            selectTime: "Select Available Time Slot:",
-            clientName: "Full Name:",
-            clientPhone: "Mobile Phone Number:",
-            clientNotes: "Options to select the case category:",
-            btnSubmit: "Confirm Appointment Request",
-            btnCancelClose: "Cancel & Close",
-            successToast: "🎉 Appointment request submitted successfully! We will contact you to confirm.",
-            alertDate: "Please select your preferred date.",
-            alertTime: "Please select your preferred time slot.",
-            alertName: "Please enter your name.",
-            alertPhone: "Please enter a valid 10-digit mobile number starting with 05.",
-            selectPlaceholder: "-- Please Select Case Category --",
-            alertCategory: "Please choose a case category from the dropdown."
-        }
-    };
-
     let selectedTimeSlot = '';
 
     // Wait until document body is available
@@ -72,18 +16,22 @@
         // Ensure we don't init twice
         if (document.getElementById('linkAppointment')) return;
 
-        // 2. Insert links dynamically
+        // 1. Insert links dynamically
         insertNavigationLinks();
 
-        // 3. Create Modal DOM
+        // 2. Create Modal DOM
         createModalDOM();
 
-        // 4. Hook into Language Switching
-        hookLanguageSwitching();
-
-        // Initialize translations with current active language
-        const initialLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-        translateAppointmentUI(initialLang);
+        // 3. Hook into Language Switching pub-sub
+        if (window.JLM && window.JLM.TranslationService) {
+            window.JLM.TranslationService.onLanguageChange((lang) => {
+                translateAppointmentUI(lang);
+            });
+            // Initial translation
+            translateAppointmentUI(window.JLM.TranslationService.getLanguage());
+        } else {
+            translateAppointmentUI('ar');
+        }
     }
 
     // Insert links into Navbar and Footer dynamically
@@ -293,31 +241,25 @@
         }
     }
 
-    // Hook language switcher
-    function hookLanguageSwitching() {
-        if (typeof applyLanguage !== 'undefined') {
-            const originalApplyLang = applyLanguage;
-            applyLanguage = function(lang) {
-                originalApplyLang(lang);
-                translateAppointmentUI(lang);
-            };
-        }
-    }
-
     // Translate all appointment text blocks
     function translateAppointmentUI(lang) {
-        const t = appointmentTranslations[lang] || appointmentTranslations.ar;
-        
+        const getT = (key) => {
+            if (window.JLM && window.JLM.TranslationService) {
+                return window.JLM.TranslationService.get(key);
+            }
+            return key;
+        };
+
         // Update links
         const navLink = document.getElementById('linkAppointment');
-        if (navLink) navLink.innerText = t.linkText;
+        if (navLink) navLink.innerText = getT('appLinkText');
         
         const footLink = document.getElementById('footerAppointment');
-        if (footLink) footLink.innerText = t.linkText;
+        if (footLink) footLink.innerText = getT('appLinkText');
 
         // Update Modal elements
         const title = document.getElementById('appointmentModalTitle');
-        if (title) title.innerText = t.modalTitle;
+        if (title) title.innerText = getT('appModalTitle');
 
         const dateInput = document.getElementById('appointmentDate');
         const dateHelper = document.getElementById('appointmentDateHelper');
@@ -329,60 +271,25 @@
         }
 
         const dateLbl = document.getElementById('lblSelectDate');
-        if (dateLbl) dateLbl.innerText = t.selectDate;
+        if (dateLbl) dateLbl.innerText = getT('appSelectDate');
 
         const timeLbl = document.getElementById('lblSelectTime');
-        if (timeLbl) timeLbl.innerText = t.selectTime;
+        if (timeLbl) timeLbl.innerText = getT('appSelectTime');
 
         const nameLbl = document.getElementById('lblClientName');
-        if (nameLbl) nameLbl.innerText = t.clientName;
+        if (nameLbl) nameLbl.innerText = getT('appClientName');
 
         const phoneLbl = document.getElementById('lblClientPhone');
-        if (phoneLbl) phoneLbl.innerText = t.clientPhone;
+        if (phoneLbl) phoneLbl.innerText = getT('appClientPhone');
 
         const notesLbl = document.getElementById('lblClientNotes');
-        if (notesLbl) notesLbl.innerText = t.clientNotes;
+        if (notesLbl) notesLbl.innerText = getT('appClientNotes');
 
         const notesSelect = document.getElementById('appointmentNotes');
         if (notesSelect) {
             const prevValue = notesSelect.value;
-            const caseOptions = {
-                ar: [
-                    "قضايا حوادث السير: (حوادث المركبات، الدهس، التأمين، التعويضات والوفاة)",
-                    "قضايا الإصابات: (الإصابات الشخصية، إصابات العمل، الأخطاء الطبية، العجز والتعويض)",
-                    "القضايا المدنية: (النزاعات المالية، العقود، التعويض عن الأضرار، الملكية والعقارات)",
-                    "القضايا الجنائية (الجزائية): (السرقة، الاحتيال، الاعتداء، الجرائم الإلكترونية، المخدرات)",
-                    "قضايا الأحوال الشخصية (الأسرة): (الزواج، الطلاق، النفقة، الحضانة، الميراث والوصايا)",
-                    "القضايا العمالية: (حقوق العمل، الفصل، الأجور والتعويضات)",
-                    "القضايا التجارية: (النزاعات، الشركات، الأوراق التجارية، الإفلاس والعقود)",
-                    "القضايا الإدارية: (الطعون في القرارات الحكومية والمنازعات العامة)",
-                    "القضايا العقارية: (الملكية، الإيجارات، تسجيل الأراضي والحدود)"
-                ],
-                he: [
-                    "תביעות תאונות דרכים: (תאונות רכב, דריסה, ביטוח, נזקי גוף ומוות)",
-                    "תביעות נזקי גוף ופציעות: (פציעות אישיות, תאונות עבודה, רשלנות רפואית, נכות ופיצויים)",
-                    "תיקים אזרחיים: (סכסוכים כספיים, חוזים, פיצוי בגין נזקים, בעלות ומקרקעין)",
-                    "תיקים פליליים: (גניבה, מרמה, תקיפה, פשעי סייבר, עבירות סמים)",
-                    "מעמד אישי ומשפחה: (גירושין, מזונות, משמורת ילדים, ירושות וצוואות)",
-                    "דיני עבודה: (זכויות עובדים, פיטורין, שכר ופיצויים)",
-                    "תיקים מסחריים: (סכסוכים, חברות, מסמכים סחירים, פשיטת רגל וחוזים)",
-                    "תיקים מנהליים: (ערעור על החלטות ממשלה, סכסוכים עם גופים ציבוריים)",
-                    "תיקי מקרקעין ונדל\"ן: (בעלות, שכירות, רישום מקרקעין וגבולות)"
-                ],
-                en: [
-                    "Traffic Accidents: (Vehicle Accidents, Insurance, Injury & Fatal Claims)",
-                    "Injury Claims: (Personal Injury, Work Injuries, Medical Malpractice, Disability & Damages)",
-                    "Civil Cases: (Financial Disputes, Contracts, Damages, Property & Ownership)",
-                    "Criminal Cases: (Theft, Fraud, Assault, Cybercrimes, Drug Offenses)",
-                    "Family & Personal Status: (Marriage, Divorce, Alimony, Child Custody, Wills & Estate)",
-                    "Labor & Employment: (Employment Rights, Wrongful Dismissal, Wages & Compensation)",
-                    "Commercial Cases: (Disputes, Corporate, Commercial Papers, Bankruptcy & Contracts)",
-                    "Administrative Cases: (Appeals Against Government Decisions & Public Disputes)",
-                    "Real Estate Cases: (Property Ownership, Rentals, Land Registry & Boundaries)"
-                ]
-            };
-            const list = caseOptions[lang] || caseOptions.ar;
-            let optionsHtml = `<option value="" disabled selected>${t.selectPlaceholder}</option>`;
+            const list = getT('appCaseOptions') || [];
+            let optionsHtml = `<option value="" disabled selected>${getT('appSelectPlaceholder')}</option>`;
             optionsHtml += list.map(opt => `<option value="${opt}">${opt}</option>`).join('');
             notesSelect.innerHTML = optionsHtml;
             if (prevValue && list.includes(prevValue)) {
@@ -391,14 +298,21 @@
         }
 
         const submitBtn = document.getElementById('btnConfirmAppointment');
-        if (submitBtn) submitBtn.innerText = t.btnSubmit;
+        if (submitBtn) submitBtn.innerText = getT('appBtnSubmit');
     }
 
     // Submit handler
     window.handleAppointmentSubmit = function(e) {
         e.preventDefault();
-        const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-        const t = appointmentTranslations[activeLang] || appointmentTranslations.ar;
+        
+        const getT = (key) => {
+            if (window.JLM && window.JLM.TranslationService) {
+                return window.JLM.TranslationService.get(key);
+            }
+            return key;
+        };
+
+        const activeLang = (window.JLM && window.JLM.TranslationService) ? window.JLM.TranslationService.getLanguage() : 'ar';
 
         const dateVal = document.getElementById('appointmentDate').value;
         const nameVal = document.getElementById('appointmentName').value.trim();
@@ -407,29 +321,28 @@
 
         // Validate
         if (!dateVal) {
-            alert(t.alertDate);
+            alert(getT('appAlertDate'));
             return;
         }
         if (!selectedTimeSlot) {
-            alert(t.alertTime);
+            alert(getT('appAlertTime'));
             return;
         }
         if (!notesVal) {
-            alert(t.alertCategory);
+            alert(getT('appAlertCategory'));
             return;
         }
         if (!nameVal) {
-            alert(t.alertName);
+            alert(getT('appAlertName'));
             return;
         }
         const phoneRegex = /^05\d-?\d{7}$/;
         if (!phoneRegex.test(phoneVal)) {
-            alert(t.alertPhone);
+            alert(getT('appAlertPhone'));
             return;
         }
 
-        // Save appointment
-        let appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
+        // Save appointment using JLM.StorageService
         const newAppointment = {
             id: Date.now(),
             name: nameVal,
@@ -440,17 +353,24 @@
             status: 'pending',
             lang: activeLang
         };
-        appointments.push(newAppointment);
-        localStorage.setItem('jlm_appointment_requests', JSON.stringify(appointments));
+
+        if (window.JLM && window.JLM.StorageService) {
+            window.JLM.StorageService.saveAppointment(newAppointment);
+        } else {
+            // Fallback if not loaded
+            let appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
+            appointments.push(newAppointment);
+            localStorage.setItem('jlm_appointment_requests', JSON.stringify(appointments));
+        }
 
         // Close modal
         closeAppointmentModal();
 
         // Confetti celebration (uses global startCelebration or alert if not loaded)
         if (typeof startCelebration !== 'undefined') {
-            startCelebration(t.successToast);
+            startCelebration(getT('appSuccessToast'));
         } else {
-            alert(t.successToast);
+            alert(getT('appSuccessToast'));
         }
 
         // Clear fields

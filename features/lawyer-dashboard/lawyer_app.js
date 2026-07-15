@@ -1,766 +1,700 @@
-const leadsTableBody = document.getElementById('leadsTableBody');
-const archiveTableBody = document.getElementById('archiveTableBody');
-const detailModal = document.getElementById('detailModal');
-const modalDetailsBody = document.getElementById('modalDetailsBody');
-const closeModalBtn = document.getElementById('closeModalBtn');
+/**
+ * ⚖️ lawyer_app.js - Lawyer Dashboard Controller Logic
+ * Rebuilt using Clean Code & SOLID principles:
+ * - Namespace pattern (window.JLM)
+ * - Decoupled shared services (StorageService, TranslationService, UIHelper)
+ * - Brittle monkeys-patches removed in favor of clean pub-sub events
+ * - Clear separation of DOM and logic concerns
+ */
+(function() {
+    // Shared aliases
+    const UI = window.JLM.UIHelper;
+    const Storage = window.JLM.StorageService;
+    const Translate = window.JLM.TranslationService;
 
-// Navigation Tabs
-const btnLeads = document.getElementById('btnLeads');
-const btnArchive = document.getElementById('btnArchive');
-const btnSettings = document.getElementById('btnSettings');
+    // References to DOM elements
+    let leadsTableBody = null;
+    let archiveTableBody = null;
+    let detailModal = null;
+    let modalDetailsBody = null;
+    let closeModalBtn = null;
 
-const leadsSection = document.getElementById('leadsSection');
-const archiveSection = document.getElementById('archiveSection');
-const settingsSection = document.getElementById('settingsSection');
+    let btnLeads = null;
+    let btnArchive = null;
+    let btnSettings = null;
 
-// Translation System Dictionary
+    let leadsSection = null;
+    let archiveSection = null;
+    let settingsSection = null;
 
-let currentLang = 'ar';
+    // Track active state
+    let knownSubmissionIds = new Set();
+    let isFirstLoad = true;
+    let isModalTranslated = false;
+    let currentActiveLeadId = null;
 
-// Mock data to pre-populate if empty
-const mockSubmissions = [
-    {
-        id: 101,
-        clientName: "محمد",
-        clientPhone: "050-1234567",
-        dateSent: "25/06/2026",
-        category: "🚗 حادث سير / مرور",
-        workLocation: "📍 منطقة إسرائيلية (قانون إسرائيلي)",
-        isNegligence: "لا ينطبق (حادث سير)",
-        accidentDetails: "صدمة من الخلف أثناء التوقف عند الإشارة الضوئية.",
-        locationBefore: "كنت أقود السيارة متوجهاً إلى عملي في الصباح الباكر.",
-        processed: false,
-        submissionLang: "ar"
-    },
-    {
-        id: 102,
-        clientName: "أحمد",
-        clientPhone: "054-9876543",
-        dateSent: "24/06/2026",
-        category: "🛠️ إصابة عمل / مصنع",
-        workLocation: "📍 منطقة الضفة الغربية (قانون فلسطيني)",
-        isNegligence: "نعم، أعتقد أن هناك طرف آخر يجب أن يتحمل المسؤولية",
-        accidentDetails: "سقوط لوح خشبي ثقيل على القدم بسبب خلل في الرافعة.",
-        locationBefore: "كنت أقف بجوار منطقة التحميل في الورشة استعداداً لنقل الأخشاب.",
-        processed: true,
-        submissionLang: "ar"
-    }
-];
-
-// Helper translation functions for DB categories and locations
-function translateCategory(cat, lang) {
-    if (!cat) return "";
-    if (lang === 'ar') return cat;
-    if (cat.includes('حادث سير') || cat.includes('Road') || cat.includes('תאונת דרכים')) {
-        return lang === 'he' ? "🚗 תאונת דרכים / תחבורה" : "🚗 Road / Traffic Accident";
-    }
-    if (cat.includes('إصابة عمل') || cat.includes('Work') || cat.includes('תאונת עבודה')) {
-        return lang === 'he' ? "🛠️ תאונת עבודה / מפעל" : "🛠️ Work Injury / Factory";
-    }
-    return cat;
-}
-
-function translateLocation(loc, lang) {
-    if (!loc) return "";
-    if (lang === 'ar') return loc;
-    if (loc.includes('إسرائيلية') || loc.includes('Israeli') || loc.includes('ישראלי')) {
-        return lang === 'he' ? "📍 אזור ישראלי (חוק הפיצויים)" : "📍 Israeli Jurisdiction (Israeli Law)";
-    }
-    if (loc.includes('الضفة') || loc.includes('West Bank') || loc.includes('יהודה ושומרון')) {
-        return lang === 'he' ? "📍 אזור יהודה ושומרון (חוק פלסטיני)" : "📍 West Bank Jurisdiction (Palestinian Law)";
-    }
-    return loc;
-}
-
-function translateNegligence(neg, lang) {
-    if (!neg) return "";
-    if (lang === 'ar') return neg;
-    if (neg.includes('لا ينطبق') || neg.includes('Not applicable') || neg.includes('لا ينطبق')) {
-        return lang === 'he' ? "לא רלוונטי / לא ينطبق" : "Not applicable";
-    }
-    if (neg.includes('نعم') || neg.includes('Yes') || neg.includes('כן')) {
-        return lang === 'he' ? "כן, קיים גורם שלישי אחראי" : "Yes, there is a third-party liable";
-    }
-    return neg;
-}
-
-// Function to translate the dashboard UI components dynamically
-function applyLanguage(lang) {
-    currentLang = lang;
-    localStorage.setItem('jlm_lawyer_lang', lang);
-    
-    // Highlight active capsule button
-    const btns = document.querySelectorAll('#langSelectorDashboard .lang-btn');
-    btns.forEach(btn => {
-        if (btn.getAttribute('data-lang') === lang) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
+    // Translation helper database for mock translations
+    const translationDatabase = {
+        "صدمة من الخلف أثناء التوقف عند الإشارة الضوئية.": {
+            he: "פגיעה מאחור בזמן עצירה ברמזור.",
+            en: "Rear-end collision while stopped at a red light."
+        },
+        "كنت أقود السيارة متوجهاً إلى عملي في الصباح الباكر.": {
+            he: "נסעתי במכונית בדרכי לעבודה בשעות הבוקר המוקדמות.",
+            en: "I was driving to work early in the morning."
+        },
+        "سقوط لوح خشبي ثقيل على القدم بسبب خلل في الرافعة.": {
+            he: "נפילת לוח עץ כבד על הרגל עקב תקלה במנוף.",
+            en: "A heavy wooden plank fell on the foot due to a crane malfunction."
+        },
+        "كنت أقف بجوار منطقة التحميل في الورشة استعداداً لنقل الأخشاب.": {
+            he: "עמדתי ליד אזור הטעינה בבית המלאכה כהכנה להעברת עצים.",
+            en: "I was standing near the loading area in the workshop preparing to move wood."
         }
-    });
-    
-    // Set document directions
-    const dir = (lang === 'en') ? 'ltr' : 'rtl';
-    document.documentElement.lang = lang;
-    document.documentElement.dir = dir;
-    document.body.style.direction = dir;
-    
-    const t = translations[lang];
-    if (!t) return;
-    
-    // Title
-    document.title = t.title;
-    
-    // Sidebar
-    const sTitle = document.querySelector('.sidebar-title');
-    if (sTitle) sTitle.innerText = t.sidebarTitle;
-    if (btnLeads) btnLeads.innerText = t.btnLeads;
-    if (btnArchive) btnArchive.innerText = t.btnArchive;
-    if (btnSettings) btnSettings.innerText = t.btnSettings;
-    
-    // Header Sections titles
-    const leadsSecTitle = document.querySelector('#leadsSection .dashboard-title');
-    if (leadsSecTitle) leadsSecTitle.innerText = t.leadsSectionTitle;
-    const archiveSecTitle = document.querySelector('#archiveSection .dashboard-title');
-    if (archiveSecTitle) archiveSecTitle.innerText = t.archiveSectionTitle;
-    const settingsSecTitle = document.querySelector('#settingsSection .dashboard-title');
-    if (settingsSecTitle) settingsSecTitle.innerText = t.settingsSectionTitle;
-    
-    // Settings description
-    const settingsCard = document.querySelector('#settingsSection .feature-card');
-    if (settingsCard) {
-        const h3 = settingsCard.querySelector('h3');
-        if (h3) h3.innerText = t.settingsHeading;
-        const p = settingsCard.querySelector('p');
-        if (p) p.innerText = t.settingsDesc;
-        const btn = settingsCard.querySelector('button');
-        if (btn) btn.innerText = t.resetBtn;
-    }
-    
-    // Detail Modal Title
-    const modalHeaderTitle = document.querySelector('#detailModal .modal-header-title');
-    if (modalHeaderTitle) modalHeaderTitle.innerText = t.modalTitle;
-    
-    // Update tables headers
-    updateTableHeaders(t);
-    
-    // Refresh Table contents
-    loadSubmissions();
-    if (typeof checkNotificationPermissionAndShowBanner === 'function') {
-        checkNotificationPermissionAndShowBanner();
-    }
-}
-
-function updateTableHeaders(t) {
-    // Leads Header
-    const leadsHead = document.querySelector('#leadsSection table thead tr');
-    if (leadsHead) {
-        leadsHead.innerHTML = `
-            <th>${t.colName}</th>
-            <th>${t.colPhone}</th>
-            <th>${t.colCategory}</th>
-            <th style="text-align: center;">${t.colProcessed}</th>
-            <th>${t.colSummary}</th>
-            <th>${t.colDate}</th>
-            <th>${t.colAction}</th>
-        `;
-    }
-    
-    // Archive Header
-    const archiveHead = document.querySelector('#archiveSection table thead tr');
-    if (archiveHead) {
-        archiveHead.innerHTML = `
-            <th>${t.colName}</th>
-            <th>${t.colPhone}</th>
-            <th>${t.colCategory}</th>
-            <th style="text-align: center;">${t.colArchiveStatus}</th>
-            <th>${t.colSummary}</th>
-            <th>${t.colDate}</th>
-            <th>${t.colAction}</th>
-        `;
-    }
-}
-
-let knownSubmissionIds = new Set();
-let isFirstLoad = true;
-
-// Parse date string formatted as DD/MM/YYYY
-function parseDateSent(dateStr) {
-    if (!dateStr) return new Date();
-    const parts = dateStr.split('/');
-    if (parts.length === 3) {
-        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    }
-    const iso = Date.parse(dateStr);
-    if (!isNaN(iso)) return new Date(iso);
-    return new Date();
-}
-
-// Gmail-style Date and Time formatter
-function formatGmailDate(lead, lang) {
-    let date = null;
-    if (lead.id && lead.id > 1000000000000) {
-        date = new Date(lead.id);
-    } else {
-        date = parseDateSent(lead.dateSent);
-    }
-    
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    
-    const diffMs = today - targetDate;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    // Time formatting
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    const timeStr = `${hours}:${minutes} ${ampm}`;
-    
-    if (diffDays === 0) {
-        const todayLabel = lang === 'he' ? 'היום' : (lang === 'en' ? 'Today' : 'اليوم');
-        return `${todayLabel}، ${timeStr}`;
-    } else if (diffDays === 1) {
-        const yesterdayLabel = lang === 'he' ? 'אתמול' : (lang === 'en' ? 'Yesterday' : 'أمس');
-        return `${yesterdayLabel}، ${timeStr}`;
-    } else if (diffDays > 1 && diffDays < 7 && targetDate.getDay() <= today.getDay()) {
-        const dayNames = {
-            ar: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-            he: ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'שבת'],
-            en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        };
-        const list = dayNames[lang] || dayNames.ar;
-        return `${list[date.getDay()]}، ${timeStr}`;
-    } else {
-        const monthNames = {
-            ar: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
-            he: ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'],
-            en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        };
-        const mList = monthNames[lang] || monthNames.ar;
-        return `${date.getDate()} ${mList[date.getMonth()]}، ${timeStr}`;
-    }
-}
-
-// Load submissions from LocalStorage
-function loadSubmissions() {
-    let rawSubmissions = localStorage.getItem('jlm_legal_submissions');
-    const isInitialized = localStorage.getItem('jlm_db_initialized');
-    let submissions = [];
-    
-    if (rawSubmissions === null) {
-        if (!isInitialized) {
-            // First time ever: pre-populate with mock data
-            localStorage.setItem('jlm_legal_submissions', JSON.stringify(mockSubmissions));
-            localStorage.setItem('jlm_db_initialized', 'true');
-            submissions = mockSubmissions;
-        } else {
-            // Wiped/Empty state: set to empty array
-            localStorage.setItem('jlm_legal_submissions', JSON.stringify([]));
-            submissions = [];
-        }
-    } else {
-        submissions = JSON.parse(rawSubmissions);
-        if (submissions.length === 0 && !isInitialized) {
-            localStorage.setItem('jlm_legal_submissions', JSON.stringify(mockSubmissions));
-            localStorage.setItem('jlm_db_initialized', 'true');
-            submissions = mockSubmissions;
-        }
-    }
-    
-    // Notify on new submissions (only unprocessed leads to avoid lawyer self-notifications on deletion/update)
-    if (!isFirstLoad) {
-        submissions.forEach(lead => {
-            if (!lead.processed && !knownSubmissionIds.has(lead.id)) {
-                triggerDesktopNotification(lead);
-            }
-        });
-    }
-    
-    // Populate known IDs
-    knownSubmissionIds = new Set(submissions.map(lead => lead.id));
-    isFirstLoad = false;
-    
-    renderTable(submissions);
-    if (typeof renderAppointmentsTable === 'function') {
-        renderAppointmentsTable();
-    }
-}
-
-// Play synth chime notification tone using Web Audio API
-
-
-// Function to trigger Desktop Notifications
-
-
-// Render submissions table
-function renderTable(submissions) {
-    leadsTableBody.innerHTML = '';
-    archiveTableBody.innerHTML = '';
-    
-    const t = translations[currentLang];
-    if (!t) return;
-    
-    // Filter pending vs processed
-    const pendingLeads = submissions.filter(lead => !lead.processed);
-    const processedLeads = submissions.filter(lead => lead.processed);
-    
-    // Update leads count badge in sidebar
-    const btnLeads = document.getElementById('btnLeads');
-    if (btnLeads) {
-        let badge = document.getElementById('leadsBadge');
-        if (!badge) {
-            badge = document.createElement('span');
-            badge.id = 'leadsBadge';
-            badge.className = 'leads-count-badge';
-            btnLeads.appendChild(badge);
-        }
-        const pendingCount = pendingLeads.length;
-        if (pendingCount > 0) {
-            badge.innerText = pendingCount;
-            badge.style.display = 'inline-block';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
-    
-    // 1. Render pending table
-    if (pendingLeads.length === 0) {
-        leadsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${t.emptyLeads}</td></tr>`;
-    } else {
-        pendingLeads.forEach(lead => {
-            const tr = document.createElement('tr');
-            const shortSummary = lead.accidentDetails ? lead.accidentDetails : (lead.accidentDate ? lead.accidentDate : '---');
-            const croppedSummary = shortSummary.length > 35 ? shortSummary.substring(0, 35) + '...' : shortSummary;
-            
-            const leadLang = lead.submissionLang || 'ar';
-            const displayCat = translateCategory(lead.category, leadLang);
-            const displayLoc = translateLocation(lead.workLocation, leadLang);
-            
-            const formattedDate = formatGmailDate(lead, currentLang);
-            const dateObj = lead.id && lead.id > 1000000000000 ? new Date(lead.id) : parseDateSent(lead.dateSent);
-            const fullDateTooltip = dateObj.toLocaleString();
-            
-            tr.innerHTML = `
-                <td><strong>${lead.clientName}</strong></td>
-                <td><a href="tel:${lead.clientPhone}" style="color: var(--accent-gold); text-decoration: none;">${lead.clientPhone}</a></td>
-                <td>${displayCat} <br><span style="font-size: 0.8rem; color: var(--text-secondary);">${displayLoc}</span></td>
-                <td style="text-align: center;">
-                    <input type="checkbox" onchange="toggleProcessed(${lead.id}, this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);">
-                </td>
-                <td style="color: var(--text-secondary); font-size: 0.85rem;" title="${shortSummary}">${croppedSummary}</td>
-                <td style="color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap;" title="${fullDateTooltip}">${formattedDate}</td>
-                <td><button class="btn-table-action" onclick="showLeadDetails(${lead.id})">${t.btnDetails}</button></td>
-            `;
-            leadsTableBody.appendChild(tr);
-        });
-    }
-    
-    // 2. Render archive table
-    if (processedLeads.length === 0) {
-        archiveTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${t.emptyArchive}</td></tr>`;
-    } else {
-        processedLeads.forEach(lead => {
-            const tr = document.createElement('tr');
-            const shortSummary = lead.accidentDetails ? lead.accidentDetails : (lead.accidentDate ? lead.accidentDate : '---');
-            const croppedSummary = shortSummary.length > 35 ? shortSummary.substring(0, 35) + '...' : shortSummary;
-            
-            const leadLang = lead.submissionLang || 'ar';
-            const displayCat = translateCategory(lead.category, leadLang);
-            const displayLoc = translateLocation(lead.workLocation, leadLang);
-            
-            tr.style.opacity = '0.65';
-            
-            const formattedDate = formatGmailDate(lead, currentLang);
-            const dateObj = lead.id && lead.id > 1000000000000 ? new Date(lead.id) : parseDateSent(lead.dateSent);
-            const fullDateTooltip = dateObj.toLocaleString();
-            
-            tr.innerHTML = `
-                <td><strong>${lead.clientName}</strong></td>
-                <td><a href="tel:${lead.clientPhone}" style="color: var(--text-secondary); text-decoration: none;">${lead.clientPhone}</a></td>
-                <td>${displayCat} <br><span style="font-size: 0.8rem; color: var(--text-secondary);">${displayLoc}</span></td>
-                <td style="text-align: center;">
-                    <input type="checkbox" checked onchange="toggleProcessed(${lead.id}, this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);">
-                </td>
-                <td style="color: var(--text-secondary); font-size: 0.85rem; text-decoration: line-through;" title="${shortSummary}">${croppedSummary}</td>
-                <td style="color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap;" title="${fullDateTooltip}">${formattedDate}</td>
-                <td><button class="btn-table-action" onclick="showLeadDetails(${lead.id})" style="text-decoration: none !important;">${t.btnDetails}</button></td>
-            `;
-            archiveTableBody.appendChild(tr);
-        });
-    }
-}
-
-// Celebrate Task Completion with Confetti and custom toast
-
-
-// Toggle Processed status in LocalStorage
-window.toggleProcessed = function(id, isChecked) {
-    let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
-    const leadIndex = submissions.findIndex(item => item.id == id);
-    if (leadIndex > -1) {
-        submissions[leadIndex].processed = isChecked;
-        localStorage.setItem('jlm_legal_submissions', JSON.stringify(submissions));
-        
-        if (isChecked) {
-            const msg = currentLang === 'en' ? "✅ Task completed successfully." : (currentLang === 'he' ? "✅ המשימה הושלמה בהצלחה." : "✅ تم إنجاز المهمة بنجاح.");
-            startCelebration(msg);
-        }
-    }
-    loadSubmissions();
-};
-
-// Database of mock translations for mock cases
-const translationDatabase = {
-    // Case 101 details
-    "صدمة من الخلف أثناء التوقف عند الإشارة الضوئية.": {
-        he: "פגיעה מאחור בזמן עצירה ברמזור.",
-        en: "Rear-end collision while stopped at a red light."
-    },
-    "كنت أقود السيارة متوجهاً إلى عملي في الصباح الباكر.": {
-        he: "נסעתי במכונית בדרכי לעבודה בשעות הבוקר המוקדמות.",
-        en: "I was driving to work early in the morning."
-    },
-    // Case 102 details
-    "سقوط لوح خشبي ثقيل على القدم بسبب خلل في الرافعة.": {
-        he: "נפילת לוח עץ כבד על הרגל עקב תקלה במנוף.",
-        en: "A heavy wooden plank fell on the foot due to a crane malfunction."
-    },
-    "كنت أقف بجوار منطقة التحميل في الورشة استعداداً لنقل الأخشاب.": {
-        he: "עמדתי ליד אזור הטעינה בבית המלאכה כהכנה להעברת עצים.",
-        en: "I was standing near the loading area in the workshop preparing to move wood."
-    }
-};
-
-// Simulated AI Translator Helper
-function getMockTranslation(text, targetLang) {
-    if (!text) return "";
-    if (translationDatabase[text] && translationDatabase[text][targetLang]) {
-        return translationDatabase[text][targetLang];
-    }
-    
-    // Fallback for custom user inputs
-    if (targetLang === 'he') {
-        return `[תרגום AI סימולטני]: פניית לקוח מנוסחת בערבית: "${text}". נראה כי המקרה מתאר פגיעה בגוף במהלך העבודה או תאונה. מומלץ ליצור קשר מיידי עם הלקוח.`;
-    }
-    if (targetLang === 'en') {
-        return `[AI Translation]: Client submission original text: "${text}". The case appears to describe a personal injury or work-related accident. Direct contact with client is recommended.`;
-    }
-    if (targetLang === 'ar') {
-        return `[ترجمة AI]: النص الأصلي للعميل: "${text}". يرجى التواصل مباشرة مع العميل لمتابعة تفاصيل القضية.`;
-    }
-    return text;
-}
-
-let isModalTranslated = false;
-let currentActiveLeadId = null;
-
-// Show case details in modal
-window.showLeadDetails = function(id) {
-    currentActiveLeadId = id;
-    isModalTranslated = false; // Reset translation state
-    renderModalContent(id);
-    detailModal.classList.add('active');
-};
-
-// Trigger simulated dynamic translation inside the modal
-window.toggleModalTranslation = function() {
-    const bannerBtn = document.querySelector('#translationBanner button');
-    const detailsContainer = document.querySelector('#modalDetailsBody');
-    
-    if (!isModalTranslated) {
-        // Show loading state to simulate translation engine
-        bannerBtn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid var(--bg-dark); border-radius:50%; border-top-color:transparent; animation: spin 0.6s linear infinite; margin-right:5px; margin-left:5px; vertical-align:middle;"></span> ...`;
-        
-        detailsContainer.style.opacity = '0.5';
-        detailsContainer.style.transition = 'opacity 0.2s';
-        
-        setTimeout(() => {
-            isModalTranslated = true;
-            renderModalContent(currentActiveLeadId);
-            detailsContainer.style.opacity = '1';
-        }, 800);
-    } else {
-        isModalTranslated = false;
-        renderModalContent(currentActiveLeadId);
-    }
-};
-
-// Sub-render method for the details modal
-function renderModalContent(id) {
-    const submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
-    const lead = submissions.find(item => item.id == id);
-    if (!lead) return;
-    
-    const t = translations[currentLang];
-    if (!t) return;
-    
-    const clientLang = lead.submissionLang || 'ar';
-    
-    // Choose display language based on translation toggled state
-    const renderLang = isModalTranslated ? currentLang : clientLang;
-    const tSub = translations[renderLang] || translations['ar'];
-    
-    const isNewSchema = lead.hasOwnProperty('accidentDetails');
-    const details = isNewSchema ? lead.accidentDetails : (lead.accidentDate || "---");
-    const otherParty = isNewSchema ? lead.isNegligence : (lead.workType || "---");
-    const locationBefore = lead.locationBefore || (lead.activityBefore || "---");
-    
-    const displayCat = translateCategory(lead.category, renderLang);
-    const displayLoc = translateLocation(lead.workLocation, renderLang);
-    const displayNeg = translateNegligence(otherParty, renderLang);
-    
-    const translatedDetails = isModalTranslated ? getMockTranslation(details, renderLang) : details;
-    const translatedLocationBefore = isModalTranslated ? getMockTranslation(locationBefore, renderLang) : locationBefore;
-    
-    // Translation banner
-    let bannerHtml = '';
-    if (clientLang !== currentLang) {
-        let promptText = '';
-        let buttonText = '';
-        
-        if (currentLang === 'he') {
-            promptText = isModalTranslated ? "הצגת פרטי המקרה מתורגמים לעברית באמצעות AI." : "האם ברצונך לתרגם את פרטי המקרה לשפת המערכת (עברית)?";
-            buttonText = isModalTranslated ? "הצג מקור" : "תרגם AI 🌐";
-        } else if (currentLang === 'en') {
-            promptText = isModalTranslated ? "Case details translated to English using AI." : "Would you like to translate the case details to English?";
-            buttonText = isModalTranslated ? "Show Original" : "Translate AI 🌐";
-        } else {
-            promptText = isModalTranslated ? "تم ترجمة تفاصيل القضية للغة النظام بواسطة الذكاء الاصطناعي." : "هل تريد ترجمة تفاصيل الحادث إلى العربية؟";
-            buttonText = isModalTranslated ? "عرض الأصل" : "ترجمة AI 🌐";
-        }
-        
-        bannerHtml = `
-            <div id="translationBanner" style="background: rgba(197, 168, 128, 0.06); border: 1px dashed var(--accent-gold); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; direction: ${currentLang === 'en' ? 'ltr' : 'rtl'};">
-                <span style="font-size: 0.85rem; color: var(--text-primary); font-weight: 500;">
-                    🌐 ${promptText}
-                </span>
-                <button onclick="toggleModalTranslation()" class="btn-table-action" style="padding: 6px 14px; font-size: 0.8rem; background: var(--accent-gold); color: var(--bg-dark) !important; font-weight: bold; border-radius: 20px; cursor: pointer; border: none; transition: all 0.2s;">
-                    ${buttonText}
-                </button>
-            </div>
-        `;
-    }
-    
-    modalDetailsBody.innerHTML = `
-        ${bannerHtml}
-        <div style="display: flex; flex-direction: column; gap: 14px; line-height: 1.6; font-size: 0.95rem;">
-            <div>
-                <strong>${t.mName}</strong> <span>${lead.clientName}</span>
-            </div>
-            <div>
-                <strong>${t.mPhone}</strong> <a href="tel:${lead.clientPhone}" style="color: var(--accent-gold); text-decoration: none;">${lead.clientPhone}</a>
-            </div>
-            <div>
-                <strong>${t.mDate}</strong> <span>${lead.dateSent}</span>
-            </div>
-            <hr style="border: 0; border-top: 1px solid var(--card-border);">
-            <div>
-                <strong>${t.mLoc}</strong> <span>${displayLoc}</span>
-            </div>
-            <div>
-                <strong>${t.mCat}</strong> <span>${displayCat}</span>
-            </div>
-            <div>
-                <strong>${t.mNeg}</strong> <span>${displayNeg}</span>
-            </div>
-            <div>
-                <strong>${t.mBefore}</strong> <span>${translatedLocationBefore}</span>
-            </div>
-            <div>
-                <strong>${t.mStatus}</strong> <span style="color: var(--accent-gold); font-weight: bold;">${lead.processed ? t.statusProcessed : t.statusPending}</span>
-            </div>
-            <hr style="border: 0; border-top: 1px solid var(--card-border);">
-            <div style="background-color: rgba(255,255,255,0.01); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px;">
-                <strong>${t.mFullDesc}</strong>
-                <p style="margin-top: 6px; font-size: 0.9rem; color: var(--text-primary); line-height: 1.5;">
-                    ${translatedDetails}
-                </p>
-            </div>
-        </div>
-    `;
-}
-
-// Reset database functionality in Settings tab
-window.resetDatabase = function() {
-    const t = translations[currentLang];
-    if (!t) return;
-    
-    if (confirm(t.resetConfirm)) {
-        let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
-        
-        // Filter out only processed (archived) leads, keep pending leads!
-        submissions = submissions.filter(item => !item.processed);
-        
-        localStorage.setItem('jlm_legal_submissions', JSON.stringify(submissions));
-        localStorage.setItem('jlm_db_initialized', 'true');
-        loadSubmissions();
-        
-        // Trigger database reset celebration confetti
-        const msg = currentLang === 'en' ? "🧹 Archive cleared successfully." : (currentLang === 'he' ? "🧹 הארכיון רוקן בהצלחה." : "🧹 تم تفريغ الأرشيف بنجاح.");
-        startCelebration(msg);
-    }
-};
-
-// Close modal
-closeModalBtn.onclick = function() {
-    detailModal.classList.remove('active');
-};
-
-detailModal.onclick = function(e) {
-    if (e.target === detailModal) {
-        detailModal.classList.remove('active');
-    }
-};
-
-// Tab Switching Navigation Click Handlers
-function switchTab(activeBtn, showSection) {
-    btnLeads.classList.remove('active');
-    btnArchive.classList.remove('active');
-    btnSettings.classList.remove('active');
-    
-    activeBtn.classList.add('active');
-    
-    leadsSection.style.display = 'none';
-    archiveSection.style.display = 'none';
-    settingsSection.style.display = 'none';
-    
-    showSection.style.display = 'block';
-}
-
-if (btnLeads && leadsSection) {
-    btnLeads.onclick = (e) => {
-        e.preventDefault();
-        switchTab(btnLeads, leadsSection);
     };
-}
 
-if (btnArchive && archiveSection) {
-    btnArchive.onclick = (e) => {
-        e.preventDefault();
-        switchTab(btnArchive, archiveSection);
-    };
-}
-
-if (btnSettings && settingsSection) {
-    btnSettings.onclick = (e) => {
-        e.preventDefault();
-        switchTab(btnSettings, settingsSection);
-    };
-}
-
-// Initial Lang selection setup
-const initLang = localStorage.getItem('jlm_lawyer_lang') || 'ar';
-
-// Register language selector event listener and request permission
-document.addEventListener('DOMContentLoaded', () => {
-    // Register language selector capsule button click listeners
-    const langBtns = document.querySelectorAll('#langSelectorDashboard .lang-btn');
-    langBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const selectedLang = btn.getAttribute('data-lang');
-            applyLanguage(selectedLang);
-        });
-    });
-    applyLanguage(initLang);
-    
-    // Request desktop notification permission on startup safely
-    if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-        Notification.requestPermission().then(() => {
-            checkNotificationPermissionAndShowBanner();
-        });
-    } else {
-        checkNotificationPermissionAndShowBanner();
-    }
-});
-
-// Listen to local storage changes to update live from client tab instantly
-window.addEventListener('storage', (e) => {
-    if (e.key === 'jlm_legal_submissions') {
-        loadSubmissions();
-    } else if (e.key === 'jlm_appointment_requests') {
-        if (typeof renderAppointmentsTable === 'function') {
-            renderAppointmentsTable();
+    function getMockTranslation(text, targetLang) {
+        if (!text) return "";
+        if (translationDatabase[text] && translationDatabase[text][targetLang]) {
+            return translationDatabase[text][targetLang];
         }
+        
+        // Fallback for custom user inputs
+        if (targetLang === 'he') {
+            return `[תרגום AI סימולטני]: פניית לקוח מנוסחת בערבית: "${text}". נראה כי המקרה מתאר פגיעה בגוף במהלך העבודה או תאונה. מומלץ ליצור קשר מיידי עם הלקוח.`;
+        }
+        if (targetLang === 'en') {
+            return `[AI Translation]: Client submission original text: "${text}". The case appears to describe a personal injury or work-related accident. Direct contact with client is recommended.`;
+        }
+        if (targetLang === 'ar') {
+            return `[ترجمة AI]: النص الأصلي للعميل: "${text}". يرجى التواصل مباشرة مع العميل لمتابعة تفاصيل القضية.`;
+        }
+        return text;
     }
-});
 
-// Periodic fallback polling (every 3 seconds) for live updates
-setInterval(loadSubmissions, 3000);
+    // Category translator helper
+    function translateCategory(cat, lang) {
+        if (!cat) return "";
+        if (lang === 'ar') return cat;
+        if (cat.includes('حادث سير') || cat.includes('Road') || cat.includes('תאונת דרכים')) {
+            return lang === 'he' ? "🚗 תאונת דרכים / תנועה" : "🚗 Road / Traffic Accident";
+        }
+        if (cat.includes('إصابة عمل') || cat.includes('Work') || cat.includes('תאונת עבודה')) {
+            return lang === 'he' ? "🛠️ תאונת עבודה / מפעל" : "🛠️ Work Injury / Factory";
+        }
+        return cat;
+    }
 
-// Run on Load
-window.onload = function() {
-    applyLanguage(initLang);
-};
+    function translateLocation(loc, lang) {
+        if (!loc) return "";
+        if (lang === 'ar') return loc;
+        if (loc.includes('إسرائيلية') || loc.includes('Israeli') || loc.includes('ישראלי')) {
+            return lang === 'he' ? "📍 אזור ישראלי (חוק הפיצויים)" : "📍 Israeli Jurisdiction (Israeli Law)";
+        }
+        if (loc.includes('الضفة') || loc.includes('West Bank') || loc.includes('יהודה ושומרון')) {
+            return lang === 'he' ? "📍 אזור יהודה ושומרון (חוק פלסטיני)" : "📍 West Bank Jurisdiction (Palestinian Law)";
+        }
+        return loc;
+    }
 
-// Check and request notification permissions via custom dashboard banner
-function checkNotificationPermissionAndShowBanner() {
-    if ("Notification" in window && Notification.permission !== "granted") {
-        const mainContent = document.querySelector('.main-content');
-        if (!mainContent) return;
-        
-        // Remove existing banner first
-        const oldBanner = document.getElementById('notificationEnableBanner');
-        if (oldBanner) oldBanner.remove();
-        
-        const banner = document.createElement('div');
-        banner.id = 'notificationEnableBanner';
-        banner.style.cssText = `
-            background: rgba(197, 168, 128, 0.08); 
-            border: 1px solid var(--accent-gold); 
-            border-radius: 12px; 
-            padding: 16px 24px; 
-            margin-bottom: 24px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            gap: 16px;
-            direction: ${currentLang === 'en' ? 'ltr' : 'rtl'};
-        `;
-        
-        let text = '';
-        let btnText = '';
-        if (currentLang === 'he') {
-            text = "🔔 לקבלת התראות וצלצול בזמן אמת בעת קבלת פנייה או תור חדש, אנא אשר שליחת התראות בדפדפן.";
-            btnText = "אשר התראות 🔔";
-        } else if (currentLang === 'en') {
-            text = "🔔 To receive live audio and desktop notifications when new leads or bookings arrive, please enable notifications.";
-            btnText = "Enable Notifications 🔔";
+    function translateNegligence(neg, lang) {
+        if (!neg) return "";
+        if (lang === 'ar') return neg;
+        if (neg.includes('لا ينطبق') || neg.includes('Not applicable') || neg.includes('לא רלוונטי')) {
+            return lang === 'he' ? "לא רלוונטי / לא ينطبق" : "Not applicable";
+        }
+        if (neg.includes('نعم') || neg.includes('Yes') || neg.includes('כן')) {
+            return lang === 'he' ? "כן, קיים גורם שלישי אחראי" : "Yes, there is a third-party liable";
+        }
+        return neg;
+    }
+
+    function parseDateSent(dateStr) {
+        if (!dateStr) return new Date();
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+            return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+        }
+        const iso = Date.parse(dateStr);
+        if (!isNaN(iso)) return new Date(iso);
+        return new Date();
+    }
+
+    // Gmail-style Date and Time formatter
+    function formatGmailDate(lead, lang) {
+        let date = null;
+        if (lead.id && lead.id > 1000000000000) {
+            date = new Date(lead.id);
         } else {
-            text = "🔔 لتلقي تنبيهات صوتية وإشعارات لحظية فورية عند وصول حجز أو رسالة جديدة، يرجى تفعيل الإشعارات في المتصفح.";
-            btnText = "تفعيل الإشعارات 🔔";
+            date = parseDateSent(lead.dateSent);
         }
         
-        banner.innerHTML = `
-            <span style="font-size: 0.95rem; color: var(--text-primary); font-weight: 500; display: flex; align-items: center; gap: 8px;">
-                ${text}
-            </span>
-            <button onclick="requestNotificationPermissionFromBanner()" class="btn-primary" style="padding: 10px 20px; font-size: 0.85rem; font-weight: bold; border-radius: 8px; border: none; background: var(--accent-gold); color: var(--bg-dark) !important; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
-                ${btnText}
-            </button>
-        `;
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
         
-        mainContent.insertBefore(banner, mainContent.firstChild);
+        const diffMs = today - targetDate;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        const timeStr = `${hours}:${minutes} ${ampm}`;
+        
+        if (diffDays === 0) {
+            const todayLabel = lang === 'he' ? 'היום' : (lang === 'en' ? 'Today' : 'اليوم');
+            return `${todayLabel}، ${timeStr}`;
+        } else if (diffDays === 1) {
+            const yesterdayLabel = lang === 'he' ? 'אתמול' : (lang === 'en' ? 'Yesterday' : 'أمس');
+            return `${yesterdayLabel}، ${timeStr}`;
+        } else if (diffDays > 1 && diffDays < 7 && targetDate.getDay() <= today.getDay()) {
+            const dayNames = {
+                ar: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+                he: ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'שבת'],
+                en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+            };
+            const list = dayNames[lang] || dayNames.ar;
+            return `${list[date.getDay()]}، ${timeStr}`;
+        } else {
+            const monthNames = {
+                ar: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+                he: ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'],
+                en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            };
+            const mList = monthNames[lang] || monthNames.ar;
+            return `${date.getDate()} ${mList[date.getMonth()]}، ${timeStr}`;
+        }
     }
-}
 
-window.requestNotificationPermissionFromBanner = function() {
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                // Play a test chime to unlock AudioContext
-                if (typeof playChime === 'function') {
-                    playChime();
+    // Expose controller globally
+    window.JLM.LawyerDashboardController = {
+        init: function() {
+            // Get DOM element references
+            leadsTableBody = document.getElementById('leadsTableBody');
+            archiveTableBody = document.getElementById('archiveTableBody');
+            detailModal = document.getElementById('detailModal');
+            modalDetailsBody = document.getElementById('modalDetailsBody');
+            closeModalBtn = document.getElementById('closeModalBtn');
+
+            btnLeads = document.getElementById('btnLeads');
+            btnArchive = document.getElementById('btnArchive');
+            btnSettings = document.getElementById('btnSettings');
+
+            leadsSection = document.getElementById('leadsSection');
+            archiveSection = document.getElementById('archiveSection');
+            settingsSection = document.getElementById('settingsSection');
+
+            // Initialize translations with auto detection
+            const activeLang = Translate.detectLanguage(['ar', 'he', 'en'], 'ar');
+            Translate.init(translations, activeLang);
+            Translate.setLanguage(activeLang);
+
+            // Bind click handlers
+            this.bindEvents();
+
+            // Subscribe to language changes
+            Translate.onLanguageChange((lang) => {
+                this.applyLanguageUI(lang);
+            });
+
+            // Initial load of submissions and setup UI
+            this.loadSubmissions();
+            this.applyLanguageUI(Translate.getLanguage());
+
+            // Polling interval for live updates from other tabs
+            setInterval(() => this.loadSubmissions(), 3000);
+
+            // Listen to browser storage changes for instant synchronization
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'jlm_legal_submissions') {
+                    this.loadSubmissions();
+                } else if (e.key === 'jlm_appointment_requests') {
+                    if (typeof renderAppointmentsTable === 'function') {
+                        renderAppointmentsTable();
+                    }
                 }
-                const banner = document.getElementById('notificationEnableBanner');
-                if (banner) banner.remove();
-            } else {
-                alert(currentLang === 'he' ? "נא לאשר התראות בהגדרות הדפדפן שלך." : (currentLang === 'en' ? "Please enable notifications in your browser settings." : "يرجى تفعيل الإشعارات من إعدادات المتصفح الخاص بك."));
+            });
+
+            // Request permission safely
+            this.initDesktopNotificationPermissions();
+        },
+
+        bindEvents: function() {
+            // Tabs switching logic
+            const switchTab = (activeBtn, showSection) => {
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                activeBtn.classList.add('active');
+                
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    Array.from(mainContent.children).forEach(child => {
+                        if (child.id && child.id.endsWith('Section')) {
+                            child.style.display = 'none';
+                        }
+                    });
+                }
+                
+                showSection.style.display = 'block';
+            };
+
+            // Expose globally so dynamically injected sections (Outlook, Pomodoro) can switch tabs
+            window.switchTab = switchTab;
+
+            if (btnLeads && leadsSection) {
+                btnLeads.onclick = (e) => { e.preventDefault(); switchTab(btnLeads, leadsSection); };
             }
-        });
-    }
-};
+            if (btnArchive && archiveSection) {
+                btnArchive.onclick = (e) => { e.preventDefault(); switchTab(btnArchive, archiveSection); };
+            }
+            if (btnSettings && settingsSection) {
+                btnSettings.onclick = (e) => { e.preventDefault(); switchTab(btnSettings, settingsSection); };
+            }
+
+            // Lang capsule switcher
+            const langBtns = document.querySelectorAll('#langSelectorDashboard .lang-btn');
+            langBtns.forEach(btn => {
+                btn.onclick = () => {
+                    const lang = btn.getAttribute('data-lang');
+                    Translate.setLanguage(lang);
+                };
+            });
+
+            // Close modal button
+            if (closeModalBtn) {
+                closeModalBtn.onclick = () => detailModal.classList.remove('active');
+            }
+            if (detailModal) {
+                detailModal.onclick = (e) => {
+                    if (e.target === detailModal) detailModal.classList.remove('active');
+                };
+            }
+        },
+
+        applyLanguageUI: function(lang) {
+            // Highlight active button
+            const btns = document.querySelectorAll('#langSelectorDashboard .lang-btn');
+            btns.forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Translate welcome stats banner
+            UI.safeSetText('txtLawyerGreeting', Translate.get('txtLawyerGreeting'));
+            UI.safeSetText('txtMotivationQuote', Translate.get('txtMotivationQuote'));
+            UI.safeSetText('txtStatPending', Translate.get('txtStatPending'));
+            UI.safeSetText('txtStatProcessed', Translate.get('txtStatProcessed'));
+            UI.safeSetText('txtStatHelped', Translate.get('txtStatHelped'));
+
+            // Update document title & dashboard elements
+            document.title = Translate.get('title');
+
+            const sTitle = document.querySelector('.sidebar-title');
+            if (sTitle) sTitle.innerText = Translate.get('sidebarTitle');
+
+            if (btnLeads) {
+                // Keep the badge if it exists
+                const badge = document.getElementById('leadsBadge');
+                btnLeads.innerText = Translate.get('btnLeads');
+                if (badge) btnLeads.appendChild(badge);
+            }
+            if (btnArchive) btnArchive.innerText = Translate.get('btnArchive');
+            if (btnSettings) btnSettings.innerText = Translate.get('btnSettings');
+
+            const leadsSecTitle = document.querySelector('#leadsSection .dashboard-title');
+            if (leadsSecTitle) leadsSecTitle.innerText = Translate.get('leadsSectionTitle');
+            const archiveSecTitle = document.querySelector('#archiveSection .dashboard-title');
+            if (archiveSecTitle) archiveSecTitle.innerText = Translate.get('archiveSectionTitle');
+            const settingsSecTitle = document.querySelector('#settingsSection .dashboard-title');
+            if (settingsSecTitle) settingsSecTitle.innerText = Translate.get('settingsSectionTitle');
+
+            const settingsCard = document.querySelector('#settingsSection .feature-card');
+            if (settingsCard) {
+                const h3 = settingsCard.querySelector('h3');
+                if (h3) h3.innerText = Translate.get('settingsHeading');
+                const p = settingsCard.querySelector('p');
+                if (p) p.innerText = Translate.get('settingsDesc');
+                const btn = settingsCard.querySelector('button');
+                if (btn) btn.innerText = Translate.get('resetBtn');
+            }
+
+            const modalHeaderTitle = document.querySelector('#detailModal .modal-header-title');
+            if (modalHeaderTitle) modalHeaderTitle.innerText = Translate.get('modalTitle');
+
+            // Table headers
+            this.updateTableHeaders();
+
+            // Rerender table
+            this.loadSubmissions();
+
+            // Refresh permission banners
+            this.checkNotificationPermissionAndShowBanner();
+        },
+
+        updateTableHeaders: function() {
+            const lHead = document.querySelector('#leadsSection table thead tr');
+            if (lHead) {
+                lHead.innerHTML = `
+                    <th>${Translate.get('colName')}</th>
+                    <th>${Translate.get('colPhone')}</th>
+                    <th>${Translate.get('colCategory')}</th>
+                    <th style="text-align: center;">${Translate.get('colProcessed')}</th>
+                    <th>${Translate.get('colSummary')}</th>
+                    <th>${Translate.get('colDate')}</th>
+                    <th>${Translate.get('colAction')}</th>
+                `;
+            }
+            const aHead = document.querySelector('#archiveSection table thead tr');
+            if (aHead) {
+                aHead.innerHTML = `
+                    <th>${Translate.get('colName')}</th>
+                    <th>${Translate.get('colPhone')}</th>
+                    <th>${Translate.get('colCategory')}</th>
+                    <th style="text-align: center;">${Translate.get('colArchiveStatus')}</th>
+                    <th>${Translate.get('colSummary')}</th>
+                    <th>${Translate.get('colDate')}</th>
+                    <th>${Translate.get('colAction')}</th>
+                `;
+            }
+        },
+
+        loadSubmissions: function() {
+            const submissions = Storage.getSubmissions();
+
+            // Desktop notification on new leads
+            if (!isFirstLoad) {
+                submissions.forEach(lead => {
+                    if (!lead.processed && !knownSubmissionIds.has(lead.id)) {
+                        if (typeof triggerDesktopNotification === 'function') {
+                            triggerDesktopNotification(lead);
+                        }
+                    }
+                });
+            }
+
+            knownSubmissionIds = new Set(submissions.map(lead => lead.id));
+            isFirstLoad = false;
+
+            this.renderTable(submissions);
+
+            // Re-render appointments if available
+            if (typeof renderAppointmentsTable === 'function') {
+                renderAppointmentsTable();
+            }
+        },
+
+        renderTable: function(submissions) {
+            leadsTableBody.innerHTML = '';
+            archiveTableBody.innerHTML = '';
+
+            const currentLang = Translate.getLanguage();
+
+            const pendingLeads = submissions.filter(lead => !lead.processed);
+            const processedLeads = submissions.filter(lead => lead.processed);
+
+            // Update live stats in welcome banner
+            const countPending = pendingLeads.length;
+            const countProcessed = processedLeads.length;
+            const countHelped = countProcessed + 14; // Include historical cases helped
+
+            UI.safeSetText('statCountPending', countPending);
+            UI.safeSetText('statCountProcessed', countProcessed);
+            UI.safeSetText('statCountHelped', countHelped);
+
+            // Sidebar counts
+            const leadsBadge = document.getElementById('leadsBadge');
+            if (leadsBadge) {
+                const count = pendingLeads.length;
+                if (count > 0) {
+                    leadsBadge.innerText = count;
+                    leadsBadge.style.display = 'inline-block';
+                } else {
+                    leadsBadge.style.display = 'none';
+                }
+            }
+
+            // Pending leads render
+            if (pendingLeads.length === 0) {
+                leadsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${Translate.get('emptyLeads')}</td></tr>`;
+            } else {
+                pendingLeads.forEach(lead => {
+                    const tr = document.createElement('tr');
+                    const details = lead.accidentDetails || lead.accidentDate || '---';
+                    const croppedDetails = details.length > 35 ? details.substring(0, 35) + '...' : details;
+                    const leadLang = lead.submissionLang || 'ar';
+                    
+                    const dateObj = lead.id && lead.id > 1000000000000 ? new Date(lead.id) : parseDateSent(lead.dateSent);
+
+                    tr.innerHTML = `
+                        <td><strong>${lead.clientName}</strong></td>
+                        <td><a href="tel:${lead.clientPhone}" style="color: var(--accent-gold); text-decoration: none;">${lead.clientPhone}</a></td>
+                        <td>${translateCategory(lead.category, leadLang)} <br><span style="font-size: 0.8rem; color: var(--text-secondary);">${translateLocation(lead.workLocation, leadLang)}</span></td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" onchange="window.JLM.LawyerDashboardController.toggleLeadStatus(${lead.id}, this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);">
+                        </td>
+                        <td style="color: var(--text-secondary); font-size: 0.85rem;" title="${details}">${croppedDetails}</td>
+                        <td style="color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap;" title="${dateObj.toLocaleString()}">${formatGmailDate(lead, currentLang)}</td>
+                        <td><button class="btn-table-action" onclick="window.JLM.LawyerDashboardController.showLeadDetails(${lead.id})">${Translate.get('btnDetails')}</button></td>
+                    `;
+                    leadsTableBody.appendChild(tr);
+                });
+            }
+
+            // Archived leads render
+            if (processedLeads.length === 0) {
+                archiveTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${Translate.get('emptyArchive')}</td></tr>`;
+            } else {
+                processedLeads.forEach(lead => {
+                    const tr = document.createElement('tr');
+                    const details = lead.accidentDetails || lead.accidentDate || '---';
+                    const croppedDetails = details.length > 35 ? details.substring(0, 35) + '...' : details;
+                    const leadLang = lead.submissionLang || 'ar';
+                    
+                    const dateObj = lead.id && lead.id > 1000000000000 ? new Date(lead.id) : parseDateSent(lead.dateSent);
+                    tr.style.opacity = '0.65';
+
+                    tr.innerHTML = `
+                        <td><strong>${lead.clientName}</strong></td>
+                        <td><a href="tel:${lead.clientPhone}" style="color: var(--text-secondary); text-decoration: none;">${lead.clientPhone}</a></td>
+                        <td>${translateCategory(lead.category, leadLang)} <br><span style="font-size: 0.8rem; color: var(--text-secondary);">${translateLocation(lead.workLocation, leadLang)}</span></td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" checked onchange="window.JLM.LawyerDashboardController.toggleLeadStatus(${lead.id}, this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);">
+                        </td>
+                        <td style="color: var(--text-secondary); font-size: 0.85rem; text-decoration: line-through;" title="${details}">${croppedDetails}</td>
+                        <td style="color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap;" title="${dateObj.toLocaleString()}">${formatGmailDate(lead, currentLang)}</td>
+                        <td><button class="btn-table-action" onclick="window.JLM.LawyerDashboardController.showLeadDetails(${lead.id})">${Translate.get('btnDetails')}</button></td>
+                    `;
+                    archiveTableBody.appendChild(tr);
+                });
+            }
+        },
+
+        toggleLeadStatus: function(id, isProcessed) {
+            Storage.updateSubmission(id, { processed: isProcessed });
+            if (isProcessed) {
+                const msg = Translate.getLanguage() === 'en' ? "✅ Task completed successfully." : (Translate.getLanguage() === 'he' ? "✅ המשימה הושלמה בהצלחה." : "✅ تم إنجاز المهمة بنجاح.");
+                if (typeof startCelebration === 'function') {
+                    startCelebration(msg);
+                }
+            }
+            this.loadSubmissions();
+        },
+
+        showLeadDetails: function(id) {
+            currentActiveLeadId = id;
+            isModalTranslated = false;
+            this.renderModalContent(id);
+            detailModal.classList.add('active');
+        },
+
+        toggleModalTranslation: function() {
+            const bannerBtn = document.querySelector('#translationBanner button');
+            const detailsContainer = document.querySelector('#modalDetailsBody');
+            
+            if (!isModalTranslated) {
+                bannerBtn.innerHTML = `<span class="spinner" style="display:inline-block; width:12px; height:12px; border:2px solid var(--bg-dark); border-radius:50%; border-top-color:transparent; animation: spin 0.6s linear infinite; margin-right:5px; margin-left:5px; vertical-align:middle;"></span> ...`;
+                detailsContainer.style.opacity = '0.5';
+                detailsContainer.style.transition = 'opacity 0.2s';
+                
+                setTimeout(() => {
+                    isModalTranslated = true;
+                    this.renderModalContent(currentActiveLeadId);
+                    detailsContainer.style.opacity = '1';
+                }, 800);
+            } else {
+                isModalTranslated = false;
+                this.renderModalContent(currentActiveLeadId);
+            }
+        },
+
+        renderModalContent: function(id) {
+            const submissions = Storage.getSubmissions();
+            const lead = submissions.find(item => item.id == id);
+            if (!lead) return;
+
+            const clientLang = lead.submissionLang || 'ar';
+            const renderLang = isModalTranslated ? Translate.getLanguage() : clientLang;
+
+            const details = lead.accidentDetails || lead.accidentDate || "---";
+            const otherParty = lead.isNegligence || lead.workType || "---";
+            const locationBefore = lead.locationBefore || lead.activityBefore || "---";
+
+            const displayCat = translateCategory(lead.category, renderLang);
+            const displayLoc = translateLocation(lead.workLocation, renderLang);
+            const displayNeg = translateNegligence(otherParty, renderLang);
+
+            const translatedDetails = isModalTranslated ? getMockTranslation(details, renderLang) : details;
+            const translatedLocationBefore = isModalTranslated ? getMockTranslation(locationBefore, renderLang) : locationBefore;
+
+            let bannerHtml = '';
+            if (clientLang !== Translate.getLanguage()) {
+                let promptText = '';
+                let buttonText = '';
+                
+                if (Translate.getLanguage() === 'he') {
+                    promptText = isModalTranslated ? "הצגת פרטי המקרה מתורגמים לעברית באמצעות AI." : "האם ברצונך לתרגם את פרטי המקרה לשפת המערכת (עברית)?";
+                    buttonText = isModalTranslated ? "הצג מקור" : "תרגם AI 🌐";
+                } else if (Translate.getLanguage() === 'en') {
+                    promptText = isModalTranslated ? "Case details translated to English using AI." : "Would you like to translate the case details to English?";
+                    buttonText = isModalTranslated ? "Show Original" : "Translate AI 🌐";
+                } else {
+                    promptText = isModalTranslated ? "تم ترجمة تفاصيل القضية للغة النظام بواسطة الذكاء الاصطناعي." : "هل تريد ترجمة تفاصيل الحادث إلى العربية؟";
+                    buttonText = isModalTranslated ? "عرض الأصل" : "ترجمة AI 🌐";
+                }
+                
+                bannerHtml = `
+                    <div id="translationBanner" style="background: rgba(197, 168, 128, 0.06); border: 1px dashed var(--accent-gold); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; direction: ${Translate.getLanguage() === 'en' ? 'ltr' : 'rtl'};">
+                        <span style="font-size: 0.85rem; color: var(--text-primary); font-weight: 500;">
+                            🌐 ${promptText}
+                        </span>
+                        <button onclick="window.JLM.LawyerDashboardController.toggleModalTranslation()" class="btn-table-action" style="padding: 6px 14px; font-size: 0.8rem; background: var(--accent-gold); color: var(--bg-dark) !important; font-weight: bold; border-radius: 20px; cursor: pointer; border: none; transition: all 0.2s;">
+                            ${buttonText}
+                        </button>
+                    </div>
+                `;
+            }
+
+            modalDetailsBody.innerHTML = `
+                ${bannerHtml}
+                <div style="display: flex; flex-direction: column; gap: 14px; line-height: 1.6; font-size: 0.95rem;">
+                    <div>
+                        <strong>${Translate.get('mName')}</strong> <span>${lead.clientName}</span>
+                    </div>
+                    <div>
+                        <strong>${Translate.get('mPhone')}</strong> <a href="tel:${lead.clientPhone}" style="color: var(--accent-gold); text-decoration: none;">${lead.clientPhone}</a>
+                    </div>
+                    <div>
+                        <strong>${Translate.get('mDate')}</strong> <span>${lead.dateSent}</span>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--card-border);">
+                    <div>
+                        <strong>${Translate.get('mLoc')}</strong> <span>${displayLoc}</span>
+                    </div>
+                    <div>
+                        <strong>${Translate.get('mCat')}</strong> <span>${displayCat}</span>
+                    </div>
+                    <div>
+                        <strong>${Translate.get('mNeg')}</strong> <span>${displayNeg}</span>
+                    </div>
+                    <div>
+                        <strong>${Translate.get('mBefore')}</strong> <span>${translatedLocationBefore}</span>
+                    </div>
+                    <div>
+                        <strong>${Translate.get('mStatus')}</strong> <span style="color: var(--accent-gold); font-weight: bold;">${lead.processed ? Translate.get('statusProcessed') : Translate.get('statusPending')}</span>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--card-border);">
+                    <div style="background-color: rgba(255,255,255,0.01); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px;">
+                        <strong>${Translate.get('mFullDesc')}</strong>
+                        <p style="margin-top: 6px; font-size: 0.9rem; color: var(--text-primary); line-height: 1.5;">
+                            ${translatedDetails}
+                        </p>
+                    </div>
+                </div>
+            `;
+        },
+
+        resetDatabase: function() {
+            if (confirm(Translate.get('resetConfirm'))) {
+                Storage.clearArchive();
+                this.loadSubmissions();
+                
+                const msg = Translate.getLanguage() === 'en' ? "🧹 Archive cleared successfully." : (Translate.getLanguage() === 'he' ? "🧹 הארכיון רוקן בהצלחה." : "🧹 تم تفريغ الأرشيف بنجاح.");
+                if (typeof startCelebration === 'function') {
+                    startCelebration(msg);
+                }
+            }
+        },
+
+        initDesktopNotificationPermissions: function() {
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission().then(() => {
+                    this.checkNotificationPermissionAndShowBanner();
+                });
+            } else {
+                this.checkNotificationPermissionAndShowBanner();
+            }
+        },
+
+        checkNotificationPermissionAndShowBanner: function() {
+            if ("Notification" in window && Notification.permission !== "granted") {
+                const mainContent = document.querySelector('.main-content');
+                if (!mainContent) return;
+                
+                const oldBanner = document.getElementById('notificationEnableBanner');
+                if (oldBanner) oldBanner.remove();
+                
+                const banner = document.createElement('div');
+                banner.id = 'notificationEnableBanner';
+                banner.style.cssText = `
+                    background: rgba(197, 168, 128, 0.08); 
+                    border: 1px solid var(--accent-gold); 
+                    border-radius: 12px; 
+                    padding: 16px 24px; 
+                    margin-bottom: 24px; 
+                    display: flex; 
+                    justify-content: space-between; 
+                    align-items: center; 
+                    gap: 16px;
+                    direction: ${Translate.getLanguage() === 'en' ? 'ltr' : 'rtl'};
+                `;
+                
+                let text = '';
+                let btnText = '';
+                if (Translate.getLanguage() === 'he') {
+                    text = "🔔 לקבלת התראות וצלצול בזמן אמת בעת קבלת פנייה או תור חדש, אנא אשר שליחת התראות בדפדפן.";
+                    btnText = "אשר התראות 🔔";
+                } else if (Translate.getLanguage() === 'en') {
+                    text = "🔔 To receive live audio and desktop notifications when new leads or bookings arrive, please enable notifications.";
+                    btnText = "Enable Notifications 🔔";
+                } else {
+                    text = "🔔 لتلقي تنبيهات صوتية وإشعارات لحظية فورية عند وصول حجز أو رسالة جديدة، يرجى تفعيل الإشعارات في المتصفح.";
+                    btnText = "تفعيل الإشعارات 🔔";
+                }
+                
+                banner.innerHTML = `
+                    <span style="font-size: 0.95rem; color: var(--text-primary); font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                        ${text}
+                    </span>
+                    <button onclick="window.JLM.LawyerDashboardController.requestNotificationPermissionFromBanner()" class="btn-primary" style="padding: 10px 20px; font-size: 0.85rem; font-weight: bold; border-radius: 8px; border: none; background: var(--accent-gold); color: var(--bg-dark) !important; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
+                        ${btnText}
+                    </button>
+                `;
+                
+                mainContent.insertBefore(banner, mainContent.firstChild);
+            }
+        },
+
+        requestNotificationPermissionFromBanner: function() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        if (typeof playChime === 'function') {
+                            playChime();
+                        }
+                        const banner = document.getElementById('notificationEnableBanner');
+                        if (banner) banner.remove();
+                    } else {
+                        alert(Translate.getLanguage() === 'he' ? "נא לאשר התראות בהגדרות הדפדפן שלך." : (Translate.getLanguage() === 'en' ? "Please enable notifications in your browser settings." : "يرجى تفعيل الإشعارات من إعدادات المتصفح الخاص بك."));
+                    }
+                });
+            }
+        }
+    };
+
+    // Global helper for settings section button (directly declared in lawyer_dashboard.html inline onclick)
+    window.resetDatabase = function() {
+        window.JLM.LawyerDashboardController.resetDatabase();
+    };
+
+    // Load dashboard on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+        window.JLM.LawyerDashboardController.init();
+    });
+})();

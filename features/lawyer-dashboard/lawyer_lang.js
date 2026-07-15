@@ -1,3 +1,7 @@
+/**
+ * 🌐 lawyer_lang.js - Lawyer Dashboard Translation Schema
+ * Unified dictionary of translations for Lawyer Dashboard and Appointment management.
+ */
 const translations = {
     ar: {
         title: "لوحة التحكم - مكتب المحاماة بالقدس",
@@ -38,7 +42,62 @@ const translations = {
         statusPending: "معلّق / لم تتم معالجته بعد",
         mFullDesc: "📝 النص الكامل لشرح الحادث:",
         mAiSummary: "💡 ملخص القضية لدراسة المحامي (AI Summary):",
-        mAiText: (cat, loc, neg, before, details) => `طلب استشارة بخصوص (<strong>${cat}</strong>) وقع في (<strong>${loc}</strong>). المسؤولية: (<strong>${neg}</strong>). الموقع المسبق للموكل: (<strong>${before}</strong>). شرح الحادث: (<strong>${details}</strong>). الملف جاهز للتواصل المباشر مع العميل لإعداد المطالبة.`
+        mAiText: (cat, loc, neg, before, details) => `طلب استشارة بخصوص (<strong>${cat}</strong>) وقع في (<strong>${loc}</strong>). المسؤولية: (<strong>${neg}</strong>). الموقع المسبق للموكل: (<strong>${before}</strong>). شرح الحادث: (<strong>${details}</strong>). الملف جاهز للتواصل المباشر مع العميل لإعداد المطالبة.`,
+
+        // Appointments management dashboard translations
+        appointmentsSectionTitle: "جدول المواعيد المحجوزة للعملاء",
+        emptyAppointments: "لا توجد مواعيد محجوزة حالياً.",
+        apptColName: "الاسم",
+        apptColPhone: "الهاتف",
+        apptColDate: "تاريخ الموعد",
+        apptColTime: "الوقت المفضل",
+        apptColNotes: "صنف القضية",
+        apptColStatus: "الحالة",
+        apptColAction: "الإجراء",
+        apptBtnApprove: "تأكيد الموعد",
+        apptBtnReject: "حذف / إلغاء",
+        apptStatusPending: "معلّق / بانتظار التأكيد",
+        apptStatusApproved: "✔️ مؤكد ومحجوز",
+        apptConfirmApprove: "هل أنت متأكد من رغبتك في تأكيد حجز هذا الموعد وتغيير حالته؟",
+        apptConfirmDelete: "هل أنت متأكد من رغبتك في حذف أو إلغاء هذا الموعد نهائياً؟",
+        apptApproveSuccess: "✔️ تم تأكيد الموعد وحفظ الحجز بنجاح!",
+        apptDeleteSuccess: "🧹 تم مسح وإلغاء الموعد بنجاح!",
+        
+        // Outlook Portal
+        sidebarLink: "بوابة Outlook 📬",
+        outlookTitle: "بوابة Outlook 📬",
+        outlookDesc: "الوصول السريع إلى تطبيقات Microsoft 365 والبريد الإلكتروني والمهام.",
+        btnPopout: "فتح البريد 📬",
+        panelTitle: "بوابة الإنتاجية الذكية",
+        panelDesc: "تكامل سلس مع خدمات Microsoft 365 لمساعدتك في إدارة المراسلات، الجداول الزمنية، والمستندات القانونية مباشرة من لوحة التحكم.",
+        quickStartTitle: "تشغيل سريع للتطبيقات",
+        tooltipMail: "البريد الإلكتروني",
+        tooltipCalendar: "التقويم",
+        tooltipCopilot: "كوبايلوت الذكي (AI)",
+        tooltipPeople: "جهات الاتصال",
+        tooltipTasks: "المهام والواجبات",
+        tooltipOneDrive: "ون درايف (OneDrive)",
+        tooltipWord: "مستندات وورد (Word)",
+        tooltipExcel: "جداول إكسل (Excel)",
+        tooltipPowerPoint: "عروض باوربوينت (PowerPoint)",
+
+        // Pomodoro Timer
+        pomodoroSidebar: "مؤقت بومودورو ⏱️",
+        pomodoroTitle: "مؤقت بومودورو للإنتاجية ⏱️",
+        pomodoroDesc: "تنظيم وإدارة وقت العمل والتركيز على القضايا القانونية باستخدام تقنية بومودورو الشهيرة.",
+        pomodoroBtnPopout: "فتح في نافذة مستقلة 🚀",
+        pomodoroPanelTitle: "مؤقت Pomodoro الذكي للعمل المكتبي",
+        pomodoroPanelDesc: "أداة رائعة لمساعدتك على التركيز: 25 دقيقة عمل بتركيز كامل، تليها 5 دقائق استراحة قصيرة.",
+        pomodoroQuickStartTitle: "التحكم السريع",
+        pomodoroIframeFallbackTitle: "تضمين مؤقت Pomodoro",
+        pomodoroIframeFallbackDesc: "إذا لم يتم تحميل المؤقت التفاعلي أدناه تلقائياً، يمكنك فتحه مباشرة بالضغط على الزر أدناه:",
+        
+        // Welcome Stats Banner
+        txtLawyerGreeting: "أهلاً بك زميلنا العزيز! ⚖️",
+        txtMotivationQuote: "\"نصرة المظلوم ومساعدة المصابين هي جوهر رسالتنا القانونية والإنسانية. نتمنى لك يوماً موفقاً!\"",
+        txtStatPending: "طلبات معلقة",
+        txtStatProcessed: "تمت المعالجة",
+        txtStatHelped: "مجموع من ساعدتهم 🌟"
     },
     he: {
         title: "לוח בקרה - משרד עורכי דין ירושלים",
@@ -79,7 +138,62 @@ const translations = {
         statusPending: "ממתין לטיפול / חדש",
         mFullDesc: "📝 פירוט האירוע המלא:",
         mAiSummary: "💡 סיכום תיק ראשוני לניתוח עורך דין (AI Summary):",
-        mAiText: (cat, loc, neg, before, details) => `בקשת ייעוץ בנושא (<strong>${cat}</strong>) שהתרחשה ב(<strong>${loc}</strong>). אחריות צד ג': (<strong>${neg}</strong>). מיקום לפני התאונה: (<strong>${before}</strong>). פירוט האירוע: (<strong>${details}</strong>). התיק מוכן ליצירת קשר ראשוני עם הלקוח להכנת התביעה.`
+        mAiText: (cat, loc, neg, before, details) => `בקשת ייעוץ בנושא (<strong>${cat}</strong>) שהתרחשה ב(<strong>${loc}</strong>). אחריות צד ג': (<strong>${neg}</strong>). מיקום לפני התאונה: (<strong>${before}</strong>). פירוט האירוע: (<strong>${details}</strong>). התיק מוכן ליצירת קשר ראשוני עם הלקוח להכנת התביעה.`,
+
+        // Appointments management dashboard translations
+        appointmentsSectionTitle: "ניהול פגישות ותורים של לקוחות",
+        emptyAppointments: "אין תורים מוזמנים כעת.",
+        apptColName: "שם",
+        apptColPhone: "טלפון",
+        apptColDate: "תאריך פגישה",
+        apptColTime: "שעה מועדפת",
+        apptColNotes: "סוג התיק",
+        apptColStatus: "סטטוס",
+        apptColAction: "פעולה",
+        apptBtnApprove: "אשר פגישה",
+        apptBtnReject: "מחק / בטל",
+        apptStatusPending: "ממתין לאישור",
+        apptStatusApproved: "✔️ מאושר וסגור",
+        apptConfirmApprove: "האם אתה בטוח שברצונך לאשר פגישה זו ולשריין את התור?",
+        apptConfirmDelete: "האם אתה בטוח שברצונך למחוק או לבטל פגישה זו לצמיתות?",
+        apptApproveSuccess: "✔️ הפגישה אושרה ושוריינה בהצלחה!",
+        apptDeleteSuccess: "🧹 הפגישה נמחקה ובסיס הנתונים עודכן!",
+        
+        // Outlook Portal
+        sidebarLink: "פורטל אאוטלוק 📬",
+        outlookTitle: "פורטל אאוטלוק 📬",
+        outlookDesc: "גישה מהירה לאפליקציות Microsoft 365, דואר אלקטרוני ומשימות.",
+        btnPopout: "פתח דואר 📬",
+        panelTitle: "פורטל פרודוקטיביות חכם",
+        panelDesc: "אינטגרציה חלקה עם שירותי Microsoft 365 לסיוע בניהול תכתובות, לוחות זמנים ומסמכים משפטיים ישירות מלוח הבקרה.",
+        quickStartTitle: "הפעלה מהירה של אפליקציות",
+        tooltipMail: "דואר אלקטרוני",
+        tooltipCalendar: "לוח שנה",
+        tooltipCopilot: "קופיילוט AI",
+        tooltipPeople: "אנשי קשר",
+        tooltipTasks: "משימות לעשייה",
+        tooltipOneDrive: "וואן דרייב",
+        tooltipWord: "מסמכי וורד",
+        tooltipExcel: "גיליונות אקסל",
+        tooltipPowerPoint: "מצגות PowerPoint",
+
+        // Pomodoro Timer
+        pomodoroSidebar: "טיימר פומודורו ⏱️",
+        pomodoroTitle: "טיימר פומודורו לפרודוקטיביות ⏱️",
+        pomodoroDesc: "ניהול זמן ושיפור הריכוז בטיפול בתיקי לקוחות באמצעות שיטת פומודורו הידועה.",
+        pomodoroBtnPopout: "פתח בחלון נפרד 🚀",
+        pomodoroPanelTitle: "טיימר פומודורו מובנה לעבודה יעילה",
+        pomodoroPanelDesc: "שיטה מוכחת להגברת המיקוד: 25 דקות של עבודה רצופה, ולאחר מכן 5 דקות הפסקה קצרה.",
+        pomodoroQuickStartTitle: "שליטה מהירה",
+        pomodoroIframeFallbackTitle: "טעינת טיימר פומודורו",
+        pomodoroIframeFallbackDesc: "אם הטיימר האינטראקטיבי אינו נטען באופן אוטומטי, תוכל לפתוח אותו ישירות בלחיצה על הכפתור:",
+        
+        // Welcome Stats Banner
+        txtLawyerGreeting: "שלום וברכה, עמיתנו היקר! ⚖️",
+        txtMotivationQuote: "\"הגנה על החלשים ועזרה לנפגעים הן לב העשייה המשפטית והאנושית שלנו. שיהיה לך יום מוצלח ומלא עשייה!\"",
+        txtStatPending: "פניות ממתינות",
+        txtStatProcessed: "טופלו ואורכבו",
+        txtStatHelped: "סך הכל נעזרו 🌟"
     },
     en: {
         title: "Lawyer Dashboard - Jerusalem Law Firm",
@@ -120,6 +234,67 @@ const translations = {
         statusPending: "Pending / Unprocessed",
         mFullDesc: "📝 Full Accident Details Description:",
         mAiSummary: "💡 Case Summary for Attorney Review (AI Summary):",
-        mAiText: (cat, loc, neg, before, details) => `Consultation request regarding (<strong>${cat}</strong>) occurred in (<strong>${loc}</strong>). Third-party liability: (<strong>${neg}</strong>). Pre-incident location: (<strong>${before}</strong>). Accident description: (<strong>${details}</strong>). File ready for direct client outreach.`
+        mAiText: (cat, loc, neg, before, details) => `Consultation request regarding (<strong>${cat}</strong>) occurred in (<strong>${loc}</strong>). Third-party liability: (<strong>${neg}</strong>). Pre-incident location: (<strong>${before}</strong>). Accident description: (<strong>${details}</strong>). File ready for direct client outreach.`,
+
+        // Appointments management dashboard translations
+        appointmentsSectionTitle: "Manage Client Appointments",
+        emptyAppointments: "No appointments scheduled at the moment.",
+        apptColName: "Name",
+        apptColPhone: "Phone",
+        apptColDate: "Date",
+        apptColTime: "Preferred Time",
+        apptColNotes: "Case Category",
+        apptColStatus: "Status",
+        apptColAction: "Action",
+        apptBtnApprove: "Approve Booking",
+        apptBtnReject: "Cancel / Delete",
+        apptStatusPending: "Pending Approval",
+        apptStatusApproved: "✔️ Approved & Scheduled",
+        apptConfirmApprove: "Are you sure you want to approve this appointment and reserve this slot?",
+        apptConfirmDelete: "Are you sure you want to delete or cancel this appointment permanently?",
+        apptApproveSuccess: "✔️ Appointment approved and scheduled successfully!",
+        apptDeleteSuccess: "🧹 Appointment canceled and deleted successfully!",
+        
+        // Outlook Portal
+        sidebarLink: "Outlook Portal 📬",
+        outlookTitle: "Outlook Portal 📬",
+        outlookDesc: "Quick access to Microsoft 365 apps, email, and tasks.",
+        btnPopout: "Open Mail 📬",
+        panelTitle: "Smart Productivity Portal",
+        panelDesc: "Seamless integration with Microsoft 365 services to help you manage correspondence, schedules, and legal documents directly from the dashboard.",
+        quickStartTitle: "Quick Launch Apps",
+        tooltipMail: "Email",
+        tooltipCalendar: "Calendar",
+        tooltipCopilot: "Copilot AI",
+        tooltipPeople: "Contacts",
+        tooltipTasks: "Tasks",
+        tooltipOneDrive: "OneDrive",
+        tooltipWord: "Word Documents",
+        tooltipExcel: "Excel Sheets",
+        tooltipPowerPoint: "PowerPoint Presentations",
+
+        // Pomodoro Timer
+        pomodoroSidebar: "Pomodoro Timer ⏱️",
+        pomodoroTitle: "Pomodoro Productivity Timer ⏱️",
+        pomodoroDesc: "Manage work time and improve focus on cases using the famous Pomodoro technique.",
+        pomodoroBtnPopout: "Open in Popup Window 🚀",
+        pomodoroPanelTitle: "Smart Pomodoro Timer for Legal Work",
+        pomodoroPanelDesc: "Proven method to increase focus: 25 minutes of concentrated work followed by a 5-minute break.",
+        pomodoroQuickStartTitle: "Quick Controls",
+        pomodoroIframeFallbackTitle: "Embedded Pomodoro Timer",
+        pomodoroIframeFallbackDesc: "If the interactive timer doesn't load automatically below, you can open it directly by clicking the button below:",
+        
+        // Welcome Stats Banner
+        txtLawyerGreeting: "Welcome, Dear Colleague! ⚖️",
+        txtMotivationQuote: "\"Upholding justice and helping the injured is the heart of our legal and human mission. Have a successful and productive day!\"",
+        txtStatPending: "Pending Leads",
+        txtStatProcessed: "Processed Leads",
+        txtStatHelped: "Total Helped 🌟"
     }
 };
+
+// Initialize the Translation Service immediately with our translations to prevent raw keys on initial load of dynamically injected portals
+if (window.JLM && window.JLM.TranslationService) {
+    const activeLang = window.JLM.TranslationService.detectLanguage(['ar', 'he', 'en'], 'ar');
+    window.JLM.TranslationService.init(translations, activeLang);
+}

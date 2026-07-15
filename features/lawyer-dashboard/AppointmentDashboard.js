@@ -1,65 +1,14 @@
-/* 📅 Isolated Appointment Booking Dashboard Component for Lawyer Dashboard */
-
+/**
+ * 📅 AppointmentDashboard.js - Isolated Appointment Booking Dashboard Component
+ * Rebuilt using Clean Code & SOLID principles:
+ * - Uses shared JLM.TranslationService and JLM.StorageService.
+ * - Monkey-patching of global functions eliminated in favor of clean callbacks.
+ * - Centralized LocalStorage keys.
+ */
 (function() {
-    const dashboardTranslations = {
-        ar: {
-            appointmentsSectionTitle: "جدول المواعيد المحجوزة للعملاء",
-            emptyAppointments: "لا توجد مواعيد محجوزة حالياً.",
-            colName: "الاسم",
-            colPhone: "الهاتف",
-            colDate: "تاريخ الموعد",
-            colTime: "الوقت المفضل",
-            colNotes: "صنف القضية",
-            colStatus: "الحالة",
-            colAction: "الإجراء",
-            btnApprove: "تأكيد الموعد",
-            btnReject: "حذف / إلغاء",
-            statusPending: "معلّق / بانتظار التأكيد",
-            statusApproved: "✔️ مؤكد ومحجوز",
-            confirmApprove: "هل أنت متأكد من رغبتك في تأكيد حجز هذا الموعد وتغيير حالته؟",
-            confirmDelete: "هل أنت متأكد من رغبتك في حذف أو إلغاء هذا الموعد نهائياً؟",
-            approveSuccess: "✔️ تم تأكيد الموعد وحفظ الحجز بنجاح!",
-            deleteSuccess: "🧹 تم مسح وإلغاء الموعد بنجاح!"
-        },
-        he: {
-            appointmentsSectionTitle: "ניהול פגישות ותורים של לקוחות",
-            emptyAppointments: "אין תורים מוזמנים כעת.",
-            colName: "שם",
-            colPhone: "טלפון",
-            colDate: "תאריך פגישה",
-            colTime: "שעה מועדפת",
-            colNotes: "סוג התיק",
-            colStatus: "סטטוס",
-            colAction: "פעולה",
-            btnApprove: "אשר פגישה",
-            btnReject: "מחק / בטל",
-            statusPending: "ממתין לאישור",
-            statusApproved: "✔️ מאושר וסגור",
-            confirmApprove: "האם אתה בטוח שברצונך לאשר פגישה זו ולשריין את התור?",
-            confirmDelete: "האם אתה בטוח שברצונך למחוק או לבטל פגישה זו לצמיתות?",
-            approveSuccess: "✔️ הפגישה אושרה ושוריינה בהצלחה!",
-            deleteSuccess: "🧹 הפגישה נמחקה ובסיס הנתונים עודכן!"
-        },
-        en: {
-            appointmentsSectionTitle: "Manage Client Appointments",
-            emptyAppointments: "No appointments scheduled at the moment.",
-            colName: "Name",
-            colPhone: "Phone",
-            colDate: "Date",
-            colTime: "Preferred Time",
-            colNotes: "Case Category",
-            colStatus: "Status",
-            colAction: "Action",
-            btnApprove: "Approve Booking",
-            btnReject: "Cancel / Delete",
-            statusPending: "Pending Approval",
-            statusApproved: "✔️ Approved & Scheduled",
-            confirmApprove: "Are you sure you want to approve this appointment and reserve this slot?",
-            confirmDelete: "Are you sure you want to delete or cancel this appointment permanently?",
-            approveSuccess: "✔️ Appointment approved and scheduled successfully!",
-            deleteSuccess: "🧹 Appointment canceled and deleted successfully!"
-        }
-    };
+    // Shared aliases
+    const Storage = window.JLM.StorageService;
+    const Translate = window.JLM.TranslationService;
 
     let knownAppointmentIds = new Set();
     let isFirstApptLoad = true;
@@ -70,7 +19,7 @@
         const showNotification = () => {
             if (typeof playChime === 'function') playChime();
             
-            const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
+            const activeLang = Translate.getLanguage();
             const title = "🔔 Lawyer AI";
             
             const bodyText = activeLang === 'he' ? `פנייה חדשה\nהתקבל תור חדש מ:\n${appt.name}\n(${appt.date} - ${appt.time})` : 
@@ -112,10 +61,8 @@
     }
 
     function initAppointmentDashboard() {
-        // Ensure leadsSection element exists
         const leadsSec = document.getElementById('leadsSection');
         if (!leadsSec) {
-            // Retry in 100ms if not rendered yet
             setTimeout(initAppointmentDashboard, 100);
             return;
         }
@@ -123,12 +70,14 @@
         // 1. Create Section HTML structure inside leadsSection
         insertSectionContainer();
 
-        // 2. Hook Navigation, Lang selectors, and Render Table wrapper
-        hookNavigationAndLang();
+        // 2. Subscribe to Translate changes
+        Translate.onLanguageChange((lang) => {
+            translateDashboardUI(lang);
+            renderAppointmentsTable();
+        });
 
-        // Initialize translations with current active language
-        const initialLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-        translateDashboardUI(initialLang);
+        // Initial translation & render
+        translateDashboardUI(Translate.getLanguage());
         renderAppointmentsTable();
     }
 
@@ -147,7 +96,7 @@
                                 <tr id="appointmentsTableHead">
                                     <!-- Headers populated dynamically -->
                                 </tr>
-                            </thead>
+                             </thead>
                             <tbody id="appointmentsTableBody">
                                 <!-- Rows loaded dynamically -->
                             </tbody>
@@ -161,57 +110,26 @@
         }
     }
 
-    // Hook original functions
-    function hookNavigationAndLang() {
-        // Wrap original renderTable to auto-update appointments and sum badge count
-        if (typeof renderTable !== 'undefined') {
-            const originalRenderTable = renderTable;
-            renderTable = function(submissions) {
-                originalRenderTable(submissions);
-                renderAppointmentsTable();
-            };
-        }
-
-        // Wrap original applyLanguage
-        if (typeof applyLanguage !== 'undefined') {
-            const originalApplyLanguage = applyLanguage;
-            applyLanguage = function(lang) {
-                originalApplyLanguage(lang);
-                translateDashboardUI(lang);
-                renderAppointmentsTable();
-            };
-        }
-
-        // Listen for storage event to support live sync updates
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'jlm_appointment_requests') {
-                renderAppointmentsTable();
-            }
-        });
-    }
-
     // Translate UI
     function translateDashboardUI(lang) {
-        const t = dashboardTranslations[lang] || dashboardTranslations.ar;
-
         // Section Title
         const secTitle = document.getElementById('appointmentsSectionTitle');
         if (secTitle) {
             const titleSpan = secTitle.querySelector('span');
-            if (titleSpan) titleSpan.innerText = t.appointmentsSectionTitle;
+            if (titleSpan) titleSpan.innerText = Translate.get('appointmentsSectionTitle');
         }
 
         // Table headers
         const headRow = document.getElementById('appointmentsTableHead');
         if (headRow) {
             headRow.innerHTML = `
-                <th>${t.colName}</th>
-                <th>${t.colPhone}</th>
-                <th>${t.colDate}</th>
-                <th>${t.colTime}</th>
-                <th>${t.colNotes}</th>
-                <th style="text-align: center;">${t.colStatus}</th>
-                <th>${t.colAction}</th>
+                <th>${Translate.get('apptColName')}</th>
+                <th>${Translate.get('apptColPhone')}</th>
+                <th>${Translate.get('apptColDate')}</th>
+                <th>${Translate.get('apptColTime')}</th>
+                <th>${Translate.get('apptColNotes')}</th>
+                <th style="text-align: center;">${Translate.get('apptColStatus')}</th>
+                <th>${Translate.get('apptColAction')}</th>
             `;
         }
     }
@@ -222,10 +140,7 @@
         if (!tableBody) return;
 
         tableBody.innerHTML = '';
-        const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-        const t = dashboardTranslations[activeLang] || dashboardTranslations.ar;
-
-        const appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
+        const appointments = Storage.getAppointments();
 
         // Check for new appointments to trigger notifications
         if (!isFirstApptLoad) {
@@ -242,7 +157,7 @@
         updatePendingAppointmentsBadge(appointments);
 
         if (appointments.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${t.emptyAppointments}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 24px;">${Translate.get('emptyAppointments')}</td></tr>`;
             return;
         }
 
@@ -251,23 +166,23 @@
             const tr = document.createElement('tr');
             
             // Status markup
-            let statusText = t.statusPending;
+            let statusText = Translate.get('apptStatusPending');
             let statusStyle = 'color: var(--text-secondary);';
             if (app.status === 'approved') {
-                statusText = t.statusApproved;
+                statusText = Translate.get('apptStatusApproved');
                 statusStyle = 'color: #c5a880; font-weight: bold;';
             }
 
-            // Buttons
+            // Action Buttons
             let actionButtons = '';
             if (app.status === 'pending') {
                 actionButtons = `
-                    <button class="btn-table-action" onclick="approveAppointment(${app.id})">${t.btnApprove}</button>
-                    <button class="btn-table-action" onclick="deleteAppointment(${app.id})" style="background-color: #ef4444; color: white !important; margin-left: 5px; margin-right: 5px;">${t.btnReject}</button>
+                    <button class="btn-table-action" onclick="approveAppointment(${app.id})">${Translate.get('apptBtnApprove')}</button>
+                    <button class="btn-table-action" onclick="deleteAppointment(${app.id})" style="background-color: #ef4444; color: white !important; margin-left: 5px; margin-right: 5px;">${Translate.get('apptBtnReject')}</button>
                 `;
             } else {
                 actionButtons = `
-                    <button class="btn-table-action" onclick="deleteAppointment(${app.id})" style="background-color: #ef4444; color: white !important;">${t.btnReject}</button>
+                    <button class="btn-table-action" onclick="deleteAppointment(${app.id})" style="background-color: #ef4444; color: white !important;">${Translate.get('apptBtnReject')}</button>
                 `;
             }
 
@@ -288,8 +203,7 @@
     function updatePendingAppointmentsBadge(appointments) {
         const badge = document.getElementById('leadsBadge');
         if (badge) {
-            let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
-            const pendingLeadsCount = submissions.filter(item => !item.processed).length;
+            const pendingLeadsCount = Storage.getSubmissions().filter(item => !item.processed).length;
             const pendingAppointmentsCount = appointments.filter(a => a.status === 'pending').length;
             
             const totalCount = pendingLeadsCount + pendingAppointmentsCount;
@@ -304,8 +218,6 @@
         // Also add badge in section header
         const secTitle = document.getElementById('appointmentsSectionTitle');
         if (secTitle) {
-            const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-            const t = dashboardTranslations[activeLang] || dashboardTranslations.ar;
             const pendingAppointmentsCount = appointments.filter(a => a.status === 'pending').length;
             
             // Remove old badge span if exists
@@ -325,49 +237,35 @@
                     margin-right: 12px;
                     margin-left: 12px;
                 `;
-                badgeSpan.innerText = activeLang === 'he' ? `${pendingAppointmentsCount} ממתינים` : (activeLang === 'en' ? `${pendingAppointmentsCount} pending` : `${pendingAppointmentsCount} معلّق`);
+                badgeSpan.innerText = Translate.getLanguage() === 'he' ? `${pendingAppointmentsCount} ממתינים` : (Translate.getLanguage() === 'en' ? `${pendingAppointmentsCount} pending` : `${pendingAppointmentsCount} معلّق`);
                 secTitle.appendChild(badgeSpan);
             }
         }
     }
 
-    // Approve Appointment Action
+    // Expose functions globally for table buttons onclicks
+    window.renderAppointmentsTable = renderAppointmentsTable;
+
     window.approveAppointment = function(id) {
-        const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-        const t = dashboardTranslations[activeLang] || dashboardTranslations.ar;
+        if (confirm(Translate.get('apptConfirmApprove'))) {
+            Storage.updateAppointment(id, { status: 'approved' });
+            renderAppointmentsTable();
 
-        if (confirm(t.confirmApprove)) {
-            let appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
-            const idx = appointments.findIndex(a => a.id == id);
-            if (idx > -1) {
-                appointments[idx].status = 'approved';
-                localStorage.setItem('jlm_appointment_requests', JSON.stringify(appointments));
-                
-                renderAppointmentsTable();
-
-                // Play celebration
-                if (typeof startCelebration !== 'undefined') {
-                    startCelebration(t.approveSuccess);
-                } else {
-                    alert(t.approveSuccess);
-                }
+            if (typeof startCelebration !== 'undefined') {
+                startCelebration(Translate.get('apptApproveSuccess'));
+            } else {
+                alert(Translate.get('apptApproveSuccess'));
             }
         }
     };
 
-    // Delete/Reject Appointment Action
     window.deleteAppointment = function(id) {
-        const activeLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
-        const t = dashboardTranslations[activeLang] || dashboardTranslations.ar;
-
-        if (confirm(t.confirmDelete)) {
-            let appointments = JSON.parse(localStorage.getItem('jlm_appointment_requests') || '[]');
+        if (confirm(Translate.get('apptConfirmDelete'))) {
+            const appointments = Storage.getAppointments();
             const appt = appointments.find(a => a.id == id);
 
             if (appt) {
-                // Add to jlm_legal_submissions as processed (archived client)
-                let submissions = JSON.parse(localStorage.getItem('jlm_legal_submissions') || '[]');
-                
+                // Add to JLM.StorageService submissions as processed (archived client)
                 const leadLang = appt.lang || 'ar';
                 const noteText = leadLang === 'he' ? `תור בוטל/נמחק: ${appt.date} - ${appt.time}` : 
                                (leadLang === 'en' ? `Canceled/Deleted Appointment: ${appt.date} - ${appt.time}` : 
@@ -383,29 +281,26 @@
                     isNegligence: "---",
                     accidentDetails: noteText,
                     locationBefore: "---",
-                    processed: true, // Mark as processed/archived
+                    processed: true,
                     submissionLang: leadLang
                 };
                 
-                submissions.push(newLead);
-                localStorage.setItem('jlm_legal_submissions', JSON.stringify(submissions));
+                Storage.saveSubmission(newLead);
                 
-                // Trigger reload of the main dashboard leads/archive tables if available
-                if (typeof loadSubmissions === 'function') {
-                    loadSubmissions();
+                // Trigger reload of the main dashboard tables
+                if (window.JLM.LawyerDashboardController && typeof window.JLM.LawyerDashboardController.loadSubmissions === 'function') {
+                    window.JLM.LawyerDashboardController.loadSubmissions();
                 }
             }
 
-            // Filter out of active appointments list
-            appointments = appointments.filter(a => a.id != id);
-            localStorage.setItem('jlm_appointment_requests', JSON.stringify(appointments));
-            
+            // Delete appointment
+            Storage.deleteAppointment(id);
             renderAppointmentsTable();
 
             if (typeof startCelebration !== 'undefined') {
-                startCelebration(t.deleteSuccess);
+                startCelebration(Translate.get('apptDeleteSuccess'));
             } else {
-                alert(t.deleteSuccess);
+                alert(Translate.get('apptDeleteSuccess'));
             }
         }
     };

@@ -1,55 +1,10 @@
 /**
  * WelcomeModal.js - Fully self-contained Welcome Modal Component
  * Grouped under the Client Intake feature.
- * 
- * Compact Premium Glassmorphism Design.
- * Zero external CSS dependencies, supports local file scheme (file:///) without CORS.
+ * Uses JLM.TranslationService for clean internationalization.
  */
 (function() {
-    // 1. Translations Dictionary
-    const localTranslations = {
-        ar: {
-            title: "أهلاً بك في جسر القدس القانوني",
-            spec: "⚖️ يختص مكتبنا في قضايا التعويضات وإصابات العمل وحوادث الطرق وغيرها من الاصابات",
-            whatTitle: "ماذا يمكنك أن تفعل من خلال الموقع؟",
-            opt1: "✅ الحصول على استشارة أولية عن بُعد مجاناً.",
-            opt2: "✅ معرفة ما إذا كانت حالتك قد تستحق تعويضاً مالياً.",
-            opt3: "✅ إرسال تفاصيل حالتك للمراجعة من قبل محامٍ مختص.",
-            opt4: "✅ طلب مكالمة هاتفية أو حجز موعد في المكتب.",
-            beforeTitle: "قبل أن تبدأ:",
-            beforeDesc: "سيقوم المساعد الذكي بطرح مجموعة من الأسئلة البسيطة لفهم حالتك بشكل أولي. تستغرق العملية عادة أقل من دقيقتين.",
-            privacy: "🔒 معلوماتك تُعامل بسرية تامة.",
-            closeBtn: "شكراً، فهمت"
-        },
-        he: {
-            title: "ברוכים הבאים לגשר אל-קודס המשפטי",
-            spec: "⚖️ משרדנו מתמחה בתביעות פיצויים, תאונות עבודה ותאונות דרכים",
-            whatTitle: "מה ניתן לעשות באמצעות האתר?",
-            opt1: "✅ קבלת ייעוץ ראשוני מרחוק ללא עלות.",
-            opt2: "✅ בדיקה האם המקרה שלך עשוי להקנות לך פיצוי כספי.",
-            opt3: "✅ שליחת פרטי המקרה לבדיקה על ידי עורך דין מומחה.",
-            opt4: "✅ בקשת שיחת טלפון או קביעת פגישה במשרד.",
-            beforeTitle: "לפני שמתחילים:",
-            beforeDesc: "העוזר החכם ישאל אותך מספר שאלות פשוטות כדי להבין את המקרה שלך באופן ראשוני. התהליך לוקח פחות משתי דקות.",
-            privacy: "🔒 המידע שלך מטופל בסודיות מוחלטת.",
-            closeBtn: "תודה, הבנתי"
-        },
-        en: {
-            title: "Welcome to Jerusalem Legal Bridge",
-            spec: "⚖️ Our firm specializes in compensation, work injuries, and traffic accidents",
-            whatTitle: "What can you do on this website?",
-            opt1: "✅ Obtain a free initial remote consultation.",
-            opt2: "✅ Learn if your case might be eligible for financial compensation.",
-            opt3: "✅ Send your case details to the law firm for review by a specialist lawyer.",
-            opt4: "✅ Request a callback or book an appointment at our office.",
-            beforeTitle: "Before you start:",
-            beforeDesc: "The smart assistant will ask simple questions to understand your case initially. The process takes less than 2 minutes.",
-            privacy: "🔒 Your information is treated with strict confidentiality.",
-            closeBtn: "Thank you, I understand"
-        }
-    };
-
-    // 2. Inject CSS Stylesheets dynamically into <head>
+    // 1. Inject CSS Stylesheets dynamically into <head>
     const styleId = "welcome-modal-styles";
     if (!document.getElementById(styleId)) {
         const style = document.createElement("style");
@@ -185,10 +140,16 @@
         document.head.appendChild(style);
     }
 
-    // 3. Expose showWelcomeModal function to global scope
+    // 2. Expose showWelcomeModal function to global scope
     window.showWelcomeModal = function(lang, onStartCallback) {
-        // Fallback to Arabic if language is unsupported
-        const t = localTranslations[lang] || localTranslations.ar;
+        // Fallback to TranslationService if available, otherwise mock translation function
+        const getT = (key) => {
+            if (window.JLM && window.JLM.TranslationService) {
+                return window.JLM.TranslationService.get(key);
+            }
+            return key;
+        };
+
         const dirClass = (lang === 'en') ? 'welcome-ltr' : 'welcome-rtl';
 
         // Create overlay backdrop
@@ -200,26 +161,26 @@
         modal.className = "welcome-modal";
         
         modal.innerHTML = `
-            <h2 class="welcome-title">${t.title}</h2>
-            <div class="welcome-spec">${t.spec}</div>
+            <h2 class="welcome-title">${getT('wTitle')}</h2>
+            <div class="welcome-spec">${getT('wSpec')}</div>
             
-            <span class="welcome-section-title">${t.whatTitle}</span>
+            <span class="welcome-section-title">${getT('wWhatTitle')}</span>
             <ul class="welcome-list">
-                <li>${t.opt1}</li>
-                <li>${t.opt2}</li>
-                <li>${t.opt3}</li>
-                <li>${t.opt4}</li>
+                <li>${getT('wOpt1')}</li>
+                <li>${getT('wOpt2')}</li>
+                <li>${getT('wOpt3')}</li>
+                <li>${getT('wOpt4')}</li>
             </ul>
             
             <hr class="welcome-divider">
             
-            <span class="welcome-section-title">${t.beforeTitle}</span>
-            <p class="welcome-desc">${t.beforeDesc}</p>
+            <span class="welcome-section-title">${getT('wBeforeTitle')}</span>
+            <p class="welcome-desc">${getT('wBeforeDesc')}</p>
             
-            <div class="welcome-privacy">${t.privacy}</div>
+            <div class="welcome-privacy">${getT('wPrivacy')}</div>
             
             <div class="welcome-cta-container">
-                <button class="welcome-cta-btn" id="welcomeCloseBtn">${t.closeBtn}</button>
+                <button class="welcome-cta-btn" id="welcomeCloseBtn">${getT('wCloseBtn')}</button>
             </div>
         `;
         
